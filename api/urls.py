@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import ClientRetrieveUpdateDestroyAPIView, ClientListCreateAPIView, \
-    MailTemplateListCreateAPIView, MailTemplateRetrieveUpdateDestroyAPIView
+    MailTemplateListCreateAPIView, MailTemplateRetrieveUpdateDestroyAPIView, RenderMailTemplateAPIView
 
 client_patterns = ([
     path('', ClientListCreateAPIView.as_view(), name='list-create'),
@@ -10,6 +10,7 @@ client_patterns = ([
 mail_template_patterns = ([
     path('', MailTemplateListCreateAPIView.as_view(), name='list-create'),
     path('/<int:pk>', MailTemplateRetrieveUpdateDestroyAPIView.as_view(), name='retrieve_update_destroy'),
+    path('/<int:pk>/render', RenderMailTemplateAPIView.as_view(), name='render'),
 ], 'mail-template-endpoints')
 
 private_urlpatterns = [

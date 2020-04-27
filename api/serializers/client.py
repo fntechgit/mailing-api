@@ -17,8 +17,6 @@ class ClientReadSerializer(serializers.ModelSerializer):
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):
-    created = TimestampField()
-    modified = TimestampField()
 
     def validate(self, data):
         client_id = data['client_id'] if 'client_id' in data else None

@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib import admin
-from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from .models import MailTemplate, Client, Mail
 # custom models
+from .utils import config
 
 admin.site.site_header = _('Mailing API Admin')
 
@@ -14,6 +14,11 @@ class MailTemplateForm(forms.ModelForm):
     html_content = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'class': 'ckeditor'})
+    )
+
+    locale = forms.ChoiceField(
+        required=False,
+        choices=list(config('SUPPORTED_LOCALES').items())
     )
 
     class Meta:

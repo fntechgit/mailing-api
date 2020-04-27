@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -33,8 +32,11 @@ EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 
 FROM_EMAIL = os.getenv("FROM_EMAIL")
 # https://docs.djangoproject.com/en/3.0/howto/error-reporting/
-ADMINS = os.getenv('ADMINS')
-
+# string should have this format
+# name1,email1|name2,email2|....|nameN,emailN
+ADMINS = [tuple(x.split(',')) for x in os.getenv('ADMINS', []).split('|')]
+# admin from email
+SERVER_EMAIL = os.getenv('SERVER_EMAIL')
 # Application definition
 
 INSTALLED_APPS = [
@@ -84,18 +86,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': os.getenv("DB_ENGINE"),
-        'NAME':os.getenv("DB_NAME"),
+        'NAME': os.getenv("DB_NAME"),
         'USER': os.getenv("DB_USER"),
         'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST':  os.getenv("DB_HOST"),
-        'PORT':  os.getenv("DB_PORT"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
     }
 }
 
@@ -117,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -130,7 +130,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -145,12 +144,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = (
-        'GET',
-        'POST',
-        'PUT',
-        'PATCH',
-        'DELETE',
-        'OPTIONS'
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
 )
 
 CACHES = {
@@ -180,15 +179,15 @@ LOGGING = {
         },
     },
     'formatters': {
-            'console': {
-                # exact format is not important, this is the minimum information
-                'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-            },
-            'file': {
-                # exact format is not important, this is the minimum information
-                'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-            },
-     },
+        'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'file': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
@@ -198,24 +197,24 @@ LOGGING = {
         'file': {
             'formatter': 'file',
             'class': 'logging.FileHandler',
-            'filename':  os.path.join(BASE_DIR, "logs/api.log"),
+            'filename': os.path.join(BASE_DIR, "logs/api.log"),
         },
         'mail_admins': {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
-            'email_backend' : 'sendgrid_backend.SendgridBackend',
+            'email_backend': 'sendgrid_backend.SendgridBackend',
             'filters': ['require_debug_false'],
             'level': 'ERROR',
         }
     },
     'loggers': {
         'django': {
-            'handlers': ['file','mail_admins'],
+            'handlers': ['file', 'mail_admins'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
             'propagate': True,
         },
         'api': {
-            'handlers': ['file','mail_admins'],
+            'handlers': ['file', 'mail_admins'],
             'level': os.getenv('API_LOG_LEVEL', 'DEBUG'),
             'propagate': True,
         },
@@ -224,7 +223,7 @@ LOGGING = {
             'level': os.getenv('OAUTH2_LOG_LEVEL', 'DEBUG'),
             'propagate': True,
         },
-        'cronjobs': {
+        'jobs': {
             'handlers': ['file', 'console'],
             'level': os.getenv('CRON_JOBS_LOG_LEVEL', 'DEBUG'),
             'propagate': True,
@@ -237,7 +236,7 @@ LOGGING = {
     },
 }
 
-DEFAULT_RENDERER_CLASSES = [ 'rest_framework.renderers.JSONRenderer']
+DEFAULT_RENDERER_CLASSES = ['rest_framework.renderers.JSONRenderer']
 
 if DEBUG:
     DEFAULT_RENDERER_CLASSES = [
@@ -246,12 +245,12 @@ if DEBUG:
     ]
 
 REST_FRAMEWORK = {
-    #'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler',
-    #'DEFAULT_AUTHENTICATION_CLASSES': (
+    # 'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler',
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
     #    'api.jwt.CustomJSONWebTokenAuthentication',
     #    'rest_framework.authentication.SessionAuthentication',
     #    'rest_framework.authentication.BasicAuthentication',
-    #),
+    # ),
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -281,14 +280,14 @@ LOCALE_PATHS = [
 DEFAULT_FILE_STORAGE = 'api.utils.storage.SwiftStorage'
 
 OAUTH2 = {
-    'IDP' : {
-        'BASE_URL' : os.getenv('OAUTH2_IDP_BASE_URL'),
-        'INTROSPECTION_ENDPOINT':  os.getenv('OAUTH2_IDP_INTROSPECTION_ENDPOINT')
+    'IDP': {
+        'BASE_URL': os.getenv('OAUTH2_IDP_BASE_URL'),
+        'INTROSPECTION_ENDPOINT': os.getenv('OAUTH2_IDP_INTROSPECTION_ENDPOINT')
     },
-    'CLIENT' : {
+    'CLIENT': {
         'ID': os.getenv('OAUTH2_CLIENT_ID'),
         'SECRET': os.getenv('OAUTH2_CLIENT_SECRET'),
-        'SCOPES' : {
+        'SCOPES': {
 
         }
     }
@@ -298,9 +297,14 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "backend/media"),
 ]
 
+SUPPORTED_LOCALES = {
+    'en': 'English',
+    'es': 'Spanish',
+    'fr': 'French',
+}
+
 # Import local settings
 try:
     from .settings_local import *
 except ImportError:
     print("Notice: Didn't import settings_local.")
-

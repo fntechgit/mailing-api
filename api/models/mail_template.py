@@ -1,22 +1,44 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from model_utils.models import TimeStampedModel
-
+import re
 from .client import Client
 
 
 class MailTemplate(TimeStampedModel):
 
     from_email = models.EmailField(blank=False)
-    identifier = models.SlugField(blank=False, unique=True)
-    subject = models.CharField(max_length = 256, blank=False)
+    identifier = models.SlugField(blank=False)
+    subject = models.CharField(max_length=256, blank=False)
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
     max_retries = models.IntegerField(default=1)
     is_active = models.BooleanField(default=False)
+    locale = models.CharField(max_length=2, default='en', blank=False)
+
+    @property
+    def has_parent(self) -> bool:
+        try:
+            return self.parent_id > 0
+        except:
+            return False
+
+    def get_parent_html_content(self) -> str:
+        return self.parent.html_content if self.has_parent else None
+
+    class Meta:
+        unique_together = ('identifier', 'locale',)
+
+    def save(self, *args, **kwargs):
+        if not self.html_content is None:
+            # fix for enclosing jinja2 blocks with p
+            pattern = re.compile("<p>({%.*%})</p>")
+            self.html_content = pattern.sub(r"\1", self.html_content)
+        super().save(*args, **kwargs)
 
     # relationships
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+
     allowed_clients = models.ManyToManyField(
         Client,
         verbose_name=_('Allowed Clients'),
