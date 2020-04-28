@@ -1,0 +1,3 @@
+
+class EntityNotFound(Exception):
+    pass

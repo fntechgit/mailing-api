@@ -27,3 +27,42 @@ class ClientEndpointsTest(APITestCase):
         json_response = json.loads(response.content)
         self.assertEqual(json_response['current_page'] , 2)
         self.assertEqual(json_response['per_page'] ,5)
+
+    def test_add_client(self):
+        url = reverse('client-endpoints:list-create')
+
+        data = {
+            'client_id': 'CLIENT_ID_1',
+        }
+
+        response = self.client.post('{url}'.format(url=url), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(response.content)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response['client_id'], 'CLIENT_ID_1')
+
+    def test_add_update_client(self):
+        url = reverse('client-endpoints:list-create')
+
+        data = {
+            'client_id': 'CLIENT_ID_1',
+        }
+
+        response = self.client.post('{url}'.format(url=url), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(response.content)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response['client_id'], 'CLIENT_ID_1')
+        pk = int(json_response['id'])
+
+        url = reverse('client-endpoints:retrieve_update_destroy', kwargs={'pk': pk})
+
+        data = {
+            'client_id': 'CLIENT_ID_12',
+        }
+
+        response = self.client.put('{url}'.format(url=url), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.content)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response['client_id'], 'CLIENT_ID_12')

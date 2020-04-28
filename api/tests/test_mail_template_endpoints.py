@@ -134,3 +134,26 @@ class ClientEndpointsTest(APITestCase):
         self.assertContains(response, "this is the footer content", 1)
         self.assertContains(response, "this is the content", 1)
 
+    def test_add_then_add_allowed_client(self):
+        url = reverse('mail-template-endpoints:list-create')
+
+        data = {
+            'identifier': 'identifier_1',
+            'locale': 'es',
+            'from_email': 'test@test.com',
+            'subject': 'test subject',
+        }
+
+        response = self.client.post('{url}'.format(url=url), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(response.content)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response['identifier'], 'identifier_1')
+
+        pk = int(json_response['id'])
+
+        client = Client.objects.first()
+
+        url = reverse('mail-template-endpoints:allowed_clients', kwargs={'pk': pk, 'client_id': 1})
+        response = self.client.put('{url}'.format(url=url), {}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

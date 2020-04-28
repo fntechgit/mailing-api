@@ -10,7 +10,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import StaticHTMLRenderer
 from rest_framework.response import Response
 
-from ..models import MailTemplate
+from .exceptions import EntityNotFound
+from ..models import MailTemplate, Client
 from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import MailTemplateReadSerializer, MailTemplateWriteSerializer
 from ..utils import config, JinjaRender
@@ -127,6 +128,77 @@ class RenderMailTemplateAPIView(GenericAPIView):
             render = JinjaRender()
             html = render.render(instance, data, True)
             return Response(html, status=status.HTTP_200_OK)
+        except ValidationError as e:
+            logging.getLogger('api').warning(e)
+            return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
+        except:
+            logging.getLogger('api').error(sys.exc_info())
+            return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class MailTemplateAllowedClientsAPIView(GenericAPIView):
+    authentication_classes = [OAuth2Authentication]
+    parser_classes = (JSONParser,)
+    renderer_classes = (StaticHTMLRenderer,)
+
+    def get_queryset(self):
+        return MailTemplate.objects.get_queryset().order_by('id')
+
+    @oauth2_scope_required(required_scope=config('OAUTH2_SCOPE_TEMPLATE_ADD_ALLOWED_CLIENT'))
+    def put(self,request, pk, client_id,  *args, **kwargs):
+        try:
+            logging.getLogger('api').debug('calling MailTemplateAllowedClientsAPIView::put')
+            template = MailTemplate.objects.filter(pk=client_id).first()
+            if not template:
+                raise EntityNotFound()
+            client = Client.objects.filter(pk=client_id).first()
+            if not client:
+                raise EntityNotFound()
+
+            if template.allowed_clients.filter(id=client.id).count() > 0:
+                raise ValidationError(
+                    'client {client_id} already is allowed on template {pk}'.format(pk=pk, client_id=client_id))
+
+            template.allowed_clients.add(client)
+
+            template.save()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except EntityNotFound as e:
+            logging.getLogger('api').warning(e)
+            return Response('Entity not found.', status=status.HTTP_404_NOT_FOUND)
+        except ValidationError as e:
+            logging.getLogger('api').warning(e)
+            return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
+        except:
+            logging.getLogger('api').error(sys.exc_info())
+            return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @oauth2_scope_required(required_scope=config('OAUTH2_SCOPE_TEMPLATE_DELETE_ALLOWED_CLIENT'))
+    def delete(self, request, pk, client_id, *args, **kwargs):
+        try:
+            logging.getLogger('api').debug('calling MailTemplateAllowedClientsAPIView::delete')
+            template = MailTemplate.objects.filter(pk=client_id).first()
+            if not template:
+                raise EntityNotFound()
+            client = Client.objects.get(pk=client_id)
+            if not client:
+                raise EntityNotFound()
+
+            if not template.allowed_clients.filter(id=client.id).count():
+                raise ValidationError(
+                    'client {client_id} does not belong to allowed clients for template {pk}'.format(pk=pk, client_id=client_id))
+
+            template.allowed_clients.remove(client)
+
+            template.save()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except EntityNotFound as e:
+            logging.getLogger('api').warning(e)
+            return Response('Entity not found.', status=status.HTTP_404_NOT_FOUND)
         except ValidationError as e:
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
