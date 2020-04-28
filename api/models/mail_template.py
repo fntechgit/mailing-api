@@ -7,9 +7,9 @@ from .client import Client
 
 class MailTemplate(TimeStampedModel):
 
-    from_email = models.EmailField(blank=False)
+    from_email = models.EmailField(blank=False, null=False)
     identifier = models.SlugField(blank=False)
-    subject = models.CharField(max_length=256, blank=False)
+    subject = models.CharField(max_length=256, blank=False, null=False)
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
     max_retries = models.IntegerField(default=1)
@@ -25,6 +25,9 @@ class MailTemplate(TimeStampedModel):
 
     def get_parent_html_content(self) -> str:
         return self.parent.html_content if self.has_parent else None
+
+    def get_parent_plain_content(self) -> str:
+        return self.parent.plain_content if self.has_parent else None
 
     class Meta:
         unique_together = ('identifier', 'locale',)
@@ -49,5 +52,10 @@ class MailTemplate(TimeStampedModel):
         related_name="allowed_clients",
         related_query_name="allowed_client",
     )
+
+    # methods
+
+    def is_allowed_client(self, client_id:int) -> bool:
+        return self.allowed_clients.filter(id=client_id).count() > 0
 
 

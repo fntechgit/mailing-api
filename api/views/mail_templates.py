@@ -114,7 +114,6 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class RenderMailTemplateAPIView(GenericAPIView):
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)
-    renderer_classes = (StaticHTMLRenderer,)
 
     def get_queryset(self):
         return MailTemplate.objects.get_queryset().order_by('id')
@@ -126,8 +125,8 @@ class RenderMailTemplateAPIView(GenericAPIView):
             data = request.data
             instance = self.get_object()
             render = JinjaRender()
-            html = render.render(instance, data, True)
-            return Response(html, status=status.HTTP_200_OK)
+            plain, html = render.render(instance, data, True)
+            return Response({'plain_content':plain, 'html_content': html }, status=status.HTTP_200_OK)
         except ValidationError as e:
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
@@ -155,7 +154,7 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
             if not client:
                 raise EntityNotFound()
 
-            if template.allowed_clients.filter(id=client.id).count() > 0:
+            if template.is_allowed_client(client_id):
                 raise ValidationError(
                     'client {client_id} already is allowed on template {pk}'.format(pk=pk, client_id=client_id))
 
@@ -186,7 +185,7 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
             if not client:
                 raise EntityNotFound()
 
-            if not template.allowed_clients.filter(id=client.id).count():
+            if not template.is_allowed_client(client_id):
                 raise ValidationError(
                     'client {client_id} does not belong to allowed clients for template {pk}'.format(pk=pk, client_id=client_id))
 

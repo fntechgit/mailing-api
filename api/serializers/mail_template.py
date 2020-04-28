@@ -45,15 +45,47 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
     parent = serializers.PrimaryKeyRelatedField(many=False, queryset=MailTemplate.objects.all(), required=False, allow_null=True)
     allowed_clients = serializers.PrimaryKeyRelatedField(many=True, queryset=Client.objects.all(), required=False)
 
+    def create(self, validated_data):
+        html_content = validated_data['html_content'] if 'html_content' in validated_data else None
+        plain_content = validated_data['plain_content'] if 'plain_content' in validated_data else None
+        has_content = not is_empty(html_content) or not is_empty(plain_content)
+        if 'is_active' not in validated_data:
+            raise ValidationError(_("is_active is mandatory."))
+
+        is_active = validated_data['is_active']
+
+        if is_active and not has_content:
+            raise ValidationError(_("Is you activate the template at least should have a body content (HTML/PLAIN)"))
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        html_content = validated_data['html_content'] if 'html_content' in validated_data else None
+        plain_content = validated_data['plain_content'] if 'plain_content' in validated_data else None
+        has_content_for_update = not is_empty(html_content) or not is_empty(plain_content)
+        has_content_on_db = not is_empty(instance.html_content) or not is_empty(instance.plain_content)
+        is_active_for_update = validated_data['is_active'] if 'is_active' in validated_data else None
+        if is_active_for_update and not has_content_for_update and not has_content_on_db:
+            raise ValidationError(_("Is you activate the template at least should have a body content (HTML/PLAIN)"))
+
+        return super().update(instance, validated_data)
+
     def validate(self, data):
+        from_email = data['from_email'] if 'from_email' in data else None
         identifier = data['identifier'] if 'identifier' in data else None
         locale = data['locale'] if 'locale' in data else None
         parent = data['parent'] if 'parent' in data else None
         html_content = data['html_content'] if 'html_content' in data else None
+        plain_content = data['plain_content'] if 'plain_content' in data else None
+
+        # content validation
+        render = JinjaRender()
+        if not is_empty(plain_content):
+            parent_content = parent.plain_content if parent else None
+            render.validate(JinjaRender.build_dic(plain_content, parent_content))
 
         if not is_empty(html_content):
-            parent_content = parent.html_content if parent and parent.parent_id > 0 else None
-            render = JinjaRender()
+            parent_content = parent.html_content if parent else None
             render.validate(JinjaRender.build_dic(html_content, parent_content))
 
         if not is_empty(locale) and locale not in config('SUPPORTED_LOCALES'):
@@ -63,6 +95,12 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         # validate parent ( parent should be a root , that is parent.parent_id = 0 )
         if parent and parent.parent_id > 0:
             raise ValidationError(_("Parent should be a root on the hierarchy."))
+
+        if is_empty(from_email) and not is_update:
+            raise ValidationError(_("from_email is mandatory."))
+
+        if is_empty(identifier) and not is_update:
+            raise ValidationError(_("identifier is mandatory."))
 
         # enforce unique IDX
         query = MailTemplate.objects.filter(identifier=identifier).filter(locale=locale)
@@ -77,3 +115,4 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = MailTemplate
         fields = '__all__'
+        read_only_fields = ['id', 'created', 'modified']

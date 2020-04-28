@@ -14,13 +14,13 @@ def oauth2_scope_required(required_scope):
         @wraps(func)
         def inner(view, *args, **kwargs):
 
-            env = os.environ.get('ENV')
-            # break validation on test
-            if env == 'test':
-                return func(view, *args, **kwargs)
-
             request = view.request
             token_info = request.auth
+
+            env = os.environ.get('ENV')
+            # break validation on test
+            if env == 'test' and token_info is None:
+                return func(view, *args, **kwargs)
 
             if token_info is None:
                 raise PermissionDenied(_("token info not present."))

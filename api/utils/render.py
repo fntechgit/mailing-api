@@ -6,5 +6,5 @@ from api.models import MailTemplate
 class Render:
 
     @abstractmethod
-    def render(self, mail_template: MailTemplate, data: dict, validate_data: bool) -> str:
+    def render(self, mail_template: MailTemplate, data: dict, validate_data: bool) -> tuple:
         pass

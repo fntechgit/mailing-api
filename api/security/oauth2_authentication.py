@@ -48,10 +48,10 @@ class OAuth2Authentication(BaseAuthentication):
                 response = requests.post(
                     '{base_url}/{endpoint}'.format
                         (
-                        base_url=config('OAUTH2_IDP_BASE_URL', None),
-                        endpoint=config('OAUTH2_IDP_INTROSPECTION_ENDPOINT', None)
+                        base_url=config('OAUTH2.IDP.BASE_URL', None),
+                        endpoint=config('OAUTH2.IDP.INTROSPECTION_ENDPOINT', None)
                     ),
-                    auth=(config('OAUTH2_CLIENT_ID', None), config('OAUTH2_CLIENT_SECRET', None),),
+                    auth=(config('OAUTH2.CLIENT.ID', None), config('OAUTH2.CLIENT.SECRET', None),),
                     params={'token': access_token},
                     verify=config('DEBUG', False)
                 )

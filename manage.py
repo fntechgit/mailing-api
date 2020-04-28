@@ -5,8 +5,8 @@ import sys
 from dotenv import load_dotenv
 
 def main():
-    env = os.getenv('ENV')
     CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
+    env = os.getenv('ENV')
     filename = '.env'
     if env:
         filename = '{filename}.{env}'.format(filename=filename, env=env)

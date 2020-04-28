@@ -218,6 +218,11 @@ LOGGING = {
             'level': os.getenv('API_LOG_LEVEL', 'DEBUG'),
             'propagate': True,
         },
+        'serializers': {
+            'handlers': ['file', 'mail_admins'],
+            'level': os.getenv('API_LOG_LEVEL', 'DEBUG'),
+            'propagate': True,
+        },
         'oauth2': {
             'handlers': ['file', 'console'],
             'level': os.getenv('OAUTH2_LOG_LEVEL', 'DEBUG'),
@@ -288,7 +293,24 @@ OAUTH2 = {
         'ID': os.getenv('OAUTH2_CLIENT_ID'),
         'SECRET': os.getenv('OAUTH2_CLIENT_SECRET'),
         'SCOPES': {
-
+            # clients
+            'OAUTH2_SCOPE_LIST_CLIENTS': os.getenv('OAUTH2_SCOPE_LIST_CLIENTS'),
+            'OAUTH2_SCOPE_ADD_CLIENT': os.getenv('OAUTH2_SCOPE_ADD_CLIENT'),
+            'OAUTH2_SCOPE_READ_CLIENT': os.getenv('OAUTH2_SCOPE_READ_CLIENT'),
+            'OAUTH2_SCOPE_UPDATE_CLIENT': os.getenv('OAUTH2_SCOPE_UPDATE_CLIENT'),
+            'OAUTH2_SCOPE_DELETE_CLIENT': os.getenv('OAUTH2_SCOPE_DELETE_CLIENT'),
+            # templates
+            'OAUTH2_SCOPE_LIST_TEMPLATES': os.getenv('OAUTH2_SCOPE_LIST_TEMPLATES'),
+            'OAUTH2_SCOPE_ADD_TEMPLATE': os.getenv('OAUTH2_SCOPE_ADD_TEMPLATE'),
+            'OAUTH2_SCOPE_READ_TEMPLATE': os.getenv('OAUTH2_SCOPE_READ_TEMPLATE'),
+            'OAUTH2_SCOPE_UPDATE_TEMPLATE': os.getenv('OAUTH2_SCOPE_UPDATE_TEMPLATE'),
+            'OAUTH2_SCOPE_DELETE_TEMPLATE': os.getenv('OAUTH2_SCOPE_DELETE_TEMPLATE'),
+            'OAUTH2_SCOPE_RENDER_TEMPLATE': os.getenv('OAUTH2_SCOPE_RENDER_TEMPLATE'),
+            'OAUTH2_SCOPE_TEMPLATE_ADD_ALLOWED_CLIENT': os.getenv('OAUTH2_SCOPE_TEMPLATE_ADD_ALLOWED_CLIENT'),
+            'OAUTH2_SCOPE_TEMPLATE_DELETE_ALLOWED_CLIENT': os.getenv('OAUTH2_SCOPE_TEMPLATE_DELETE_ALLOWED_CLIENT'),
+            # emails
+            'LIST_EMAILS': os.getenv('OAUTH2_SCOPE_LIST_EMAILS'),
+            'SEND_EMAIL': os.getenv('OAUTH2_SCOPE_SEND_EMAIL'),
         }
     }
 }

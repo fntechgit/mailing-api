@@ -6,10 +6,11 @@ from ..models import MailTemplate
 from api.utils import Render
 from api.utils.empty_str import is_empty
 
+
 class JinjaRender(Render):
 
-    INDEX_FILE = 'index.html'
-    LAYOUT_FILE = 'layout.html'
+    INDEX_FILE = 'index'
+    LAYOUT_FILE = 'layout'
 
     def __init__(self):
         self.env = None
@@ -24,7 +25,7 @@ class JinjaRender(Render):
         if JinjaRender.LAYOUT_FILE in templates:
             ref_templates = list(meta.find_referenced_templates(parsed_content))
             if JinjaRender.LAYOUT_FILE not in ref_templates:
-                raise ValidationError(_("You need to define a {%- extends 'layout.html' %} on your child template."))
+                raise ValidationError(_("You need to define a {%- extends 'layout' %} on your child template."))
 
         return parsed_content
 
@@ -38,17 +39,9 @@ class JinjaRender(Render):
 
         return templates
 
-    def render(self, mail_template: MailTemplate, data: dict, validate_data: bool) -> str:
-        html_content = mail_template.html_content
-        html_parent_content = None
+    def _render_content(self, content:str, parent_content:str, data: dict, validate_data: bool):
 
-        if is_empty(html_content):
-            raise ValidationError(_("missing HTML content"))
-
-        if mail_template.has_parent > 0 and is_empty(mail_template.parent.html_content):
-            html_parent_content = mail_template.get_parent_html_content()
-
-        parsed_content = self.validate(JinjaRender.build_dic(html_content, html_parent_content))
+        parsed_content = self.validate(JinjaRender.build_dic(content, parent_content))
         t = self.env.get_template(JinjaRender.INDEX_FILE)
 
         if validate_data:
@@ -65,5 +58,32 @@ class JinjaRender(Render):
         r = t.render(**data)
 
         return r
+
+    def render(self, mail_template: MailTemplate, data: dict, validate_data: bool) -> tuple:
+        html_content = mail_template.html_content
+        plain_content = mail_template.plain_content
+        html_parent_content = None
+        plain_parent_content = None
+
+        if mail_template.has_parent:
+            html_parent_content = mail_template.get_parent_html_content()
+            plain_parent_content = mail_template.get_parent_plain_content()
+
+        html_render = None
+        plain_render = None
+        has_content = False
+
+        if not is_empty(html_content):
+            has_content = True
+            html_render = self._render_content(html_content, html_parent_content, data, validate_data)
+
+        if not is_empty(plain_content):
+            has_content = True
+            plain_render = self._render_content(plain_content, plain_parent_content, data, validate_data)
+
+        if not has_content:
+            raise ValidationError(_("missing content (HTML or Plain)"))
+
+        return plain_render, html_render
 
 
