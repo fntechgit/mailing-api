@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -250,12 +251,6 @@ if DEBUG:
     ]
 
 REST_FRAMEWORK = {
-    # 'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler',
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #    'api.jwt.CustomJSONWebTokenAuthentication',
-    #    'rest_framework.authentication.SessionAuthentication',
-    #    'rest_framework.authentication.BasicAuthentication',
-    # ),
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -292,25 +287,106 @@ OAUTH2 = {
     'CLIENT': {
         'ID': os.getenv('OAUTH2_CLIENT_ID'),
         'SECRET': os.getenv('OAUTH2_CLIENT_SECRET'),
-        'SCOPES': {
+        'ENDPOINTS': {
             # clients
-            'LIST_CLIENTS': os.getenv('OAUTH2_SCOPE_LIST_CLIENTS'),
-            'ADD_CLIENT': os.getenv('OAUTH2_SCOPE_ADD_CLIENT'),
-            'READ_CLIENT': os.getenv('OAUTH2_SCOPE_READ_CLIENT'),
-            'UPDATE_CLIENT': os.getenv('OAUTH2_SCOPE_UPDATE_CLIENT'),
-            'DELETE_CLIENT': os.getenv('OAUTH2_SCOPE_DELETE_CLIENT'),
+            '/api/v1/clients': {
+                'get': {
+                    'name': _('GetAllClients'),
+                    'desc': _('Get all Registered Clients'),
+                    'scopes':os.getenv('OAUTH2_SCOPE_LIST_CLIENTS')
+                },
+                'post':{
+                    'name': _('AddClient'),
+                    'desc': _('Register Client'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_ADD_CLIENT'),
+                }
+            },
+            '/api/v1/clients/{id}':{
+                'get':{
+                    'name': _('GetClientById'),
+                    'desc': _('Get Client By Id'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_READ_CLIENT'),
+                },
+                'put': {
+                    'name': _('UpdateClient'),
+                    'desc': _('Update Client'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_UPDATE_CLIENT')
+                },
+                'delete': {
+                    'name': _('DeleteClient'),
+                    'desc': _('Delete Client'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_DELETE_CLIENT')
+                },
+            },
             # templates
-            'LIST_TEMPLATES': os.getenv('OAUTH2_SCOPE_LIST_TEMPLATES'),
-            'ADD_TEMPLATE': os.getenv('OAUTH2_SCOPE_ADD_TEMPLATE'),
-            'READ_TEMPLATE': os.getenv('OAUTH2_SCOPE_READ_TEMPLATE'),
-            'UPDATE_TEMPLATE': os.getenv('OAUTH2_SCOPE_UPDATE_TEMPLATE'),
-            'DELETE_TEMPLATE': os.getenv('OAUTH2_SCOPE_DELETE_TEMPLATE'),
-            'RENDER_TEMPLATE': os.getenv('OAUTH2_SCOPE_RENDER_TEMPLATE'),
-            'TEMPLATE_ADD_ALLOWED_CLIENT': os.getenv('OAUTH2_SCOPE_TEMPLATE_ADD_ALLOWED_CLIENT'),
-            'TEMPLATE_DELETE_ALLOWED_CLIENT': os.getenv('OAUTH2_SCOPE_TEMPLATE_DELETE_ALLOWED_CLIENT'),
+            '/api/v1/mail-templates':{
+                'get':{
+                    'name': _('GetAllEmailTemplates'),
+                    'desc': _('Get All Email Templates'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_LIST_TEMPLATES')
+                },
+                'post': {
+                    'name': _('AddEmailTemplate'),
+                    'desc': _('Create Email Template'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_ADD_TEMPLATE')
+                },
+            },
+            '/api/v1/mail-templates/{id}':{
+                'get':{
+                    'name': _('GetEmailTemplateById'),
+                    'desc': _('Get Email Template By Id'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_READ_TEMPLATE')
+                },
+                'put': {
+                    'name': _('UpdateEmailTemplate'),
+                    'desc': _('Update Email Template'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_UPDATE_TEMPLATE')
+                },
+                'delete': {
+                    'name': _('DeleteEmailTemplate'),
+                    'desc': _('Delete Email Template'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_DELETE_TEMPLATE')
+                }
+            },
+            '/api/v1/mail-templates/{id}/render':{
+                'put':{
+                    'name': _('RenderEmailTemplate'),
+                    'desc': _('Render Email Template'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_RENDER_TEMPLATE')
+                }
+            },
+            '/api/v1/mail-templates/{id}/allowed-clients/{client_id}':{
+                'put':{
+                    'name': _('AddAllowedClientToEmailTemplate'),
+                    'desc': _('Add Allowed Client to Email Template'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_TEMPLATE_ADD_ALLOWED_CLIENT')
+                },
+                'delete':{
+                    'name': _('RemoveAllowedClientFromEmailTemplate'),
+                    'desc': _('Remove Allowed Client from Email Template'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_TEMPLATE_DELETE_ALLOWED_CLIENT')
+                }
+            },
             # emails
-            'LIST_EMAILS': os.getenv('OAUTH2_SCOPE_LIST_EMAILS'),
-            'SEND_EMAIL': os.getenv('OAUTH2_SCOPE_SEND_EMAIL'),
+            '/api/v1/mails': {
+                'get': {
+                    'name': _('GetAllEmails'),
+                    'desc': _('Get All emails'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_LIST_EMAILS')
+                },
+                'post': {
+                    'name': _('SendEmail'),
+                    'desc': _('Send Email'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_SEND_EMAIL')
+                },
+            },
+            '/api/v1/mails/sent': {
+                'get': {
+                    'name': _('GetAllSentEmails'),
+                    'desc': _('Get All Sent emails'),
+                    'scopes': os.getenv('OAUTH2_SCOPE_LIST_EMAILS')
+                },
+            }
         }
     }
 }
@@ -324,9 +400,3 @@ SUPPORTED_LOCALES = {
     'es': 'Spanish',
     'fr': 'French',
 }
-
-# Import local settings
-try:
-    from .settings_local import *
-except ImportError:
-    print("Notice: Didn't import settings_local.")

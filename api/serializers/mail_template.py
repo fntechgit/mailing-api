@@ -42,6 +42,9 @@ class MailTemplateReadSerializer(serializers.ModelSerializer):
 
 
 class MailTemplateWriteSerializer(serializers.ModelSerializer):
+
+    created = TimestampField(read_only=True)
+    modified = TimestampField(read_only=True)
     parent = serializers.PrimaryKeyRelatedField(many=False, queryset=MailTemplate.objects.all(), required=False, allow_null=True)
     allowed_clients = serializers.PrimaryKeyRelatedField(many=True, queryset=Client.objects.all(), required=False)
 
@@ -50,7 +53,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         plain_content = validated_data['plain_content'] if 'plain_content' in validated_data else None
         has_content = not is_empty(html_content) or not is_empty(plain_content)
         if 'is_active' not in validated_data:
-            raise ValidationError(_("is_active is mandatory."))
+            validated_data['is_active'] = False
 
         is_active = validated_data['is_active']
 
@@ -115,4 +118,3 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = MailTemplate
         fields = '__all__'
-        read_only_fields = ['id', 'created', 'modified']

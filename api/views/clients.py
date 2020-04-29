@@ -8,11 +8,39 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
+from rest_framework.schemas.openapi import AutoSchema
 
 from ..models import Client
 from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import ClientReadSerializer, ClientWriteSerializer
 from ..utils import config
+
+
+class CustomClientSchema(AutoSchema):
+    def _get_serializer(self, method, path):
+        if method == 'GET':
+            return ClientReadSerializer()
+        return ClientWriteSerializer()
+
+    def get_security(self, scopes):
+        return {
+            'OAuth2' : scopes
+        }
+
+    def get_operation(self, path, method):
+        operation = super().get_operation(path, method)
+        path = '/api{path}'.format(path=path)
+        endpoints = config('OAUTH2.CLIENT.ENDPOINTS')
+        method = str(method).lower()
+        endpoint = endpoints[path] if path in endpoints else None
+        endpoint = endpoint[method] if endpoint is not None and method in endpoint else None
+
+        if endpoint:
+            operation['operationId'] = str(endpoint['name'])
+            operation['description'] = str(endpoint['desc'])
+            operation['security'] = self.get_security(str(endpoint['scopes']))
+
+        return operation
 
 
 class ClientFilter(FilterSet):
@@ -26,6 +54,7 @@ class ClientFilter(FilterSet):
 class ClientListCreateAPIView(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ClientFilter
+    schema = CustomClientSchema()
     # ordering
     ordering_fields = ['id', 'created', 'updated', 'client_id']
     ordering = ['id']
@@ -36,15 +65,15 @@ class ClientListCreateAPIView(ListCreateAPIView):
         return Client.objects.get_queryset().order_by('id')
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.request.method == 'POST':
+        if self.request is not None and self.request.method == 'POST':
             return ClientWriteSerializer
         return ClientReadSerializer
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.LIST_CLIENTS'))
+    @oauth2_scope_required()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.ADD_CLIENT'))
+    @oauth2_scope_required()
     def post(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling ClientListCreateAPIView::post')
@@ -60,6 +89,7 @@ class ClientListCreateAPIView(ListCreateAPIView):
 class ClientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)
+    schema = CustomClientSchema()
 
     def get_queryset(self):
         pk = self.kwargs['pk'] if 'pk' in self.kwargs else 0
@@ -68,15 +98,15 @@ class ClientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         return Client.objects.get_queryset().order_by('id')
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.request.method == 'GET':
+        if self.request is not None and self.request.method == 'GET':
             return ClientReadSerializer
         return ClientWriteSerializer
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.READ_CLIENT'))
+    @oauth2_scope_required()
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.UPDATE_CLIENT'))
+    @oauth2_scope_required()
     def put(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling ClientRetrieveUpdateDestroyAPIView::put')
@@ -91,7 +121,7 @@ class ClientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     def patch(self, request, *args, **kwargs):
         pass
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.DELETE_CLIENT'))
+    @oauth2_scope_required()
     def delete(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling ClientRetrieveUpdateDestroyAPIView::destroy')

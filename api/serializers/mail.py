@@ -1,19 +1,16 @@
+import logging
+
 from django.core.validators import EmailValidator
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ValidationError
-import logging
+
 from . import TimestampField
 from ..models import MailTemplate, Client, Mail
-from ..utils import is_empty, JinjaRender, config
-import re
-
+from ..utils import is_empty, JinjaRender
 
 
 class MailReadSerializer(serializers.ModelSerializer):
-
-
     created = TimestampField()
     modified = TimestampField()
 
@@ -27,11 +24,13 @@ class MailWriteSerializer(serializers.ModelSerializer):
                                                   allow_null=False)
     payload = serializers.JSONField()
     subject = serializers.CharField(required=False)
+    created = TimestampField(read_only=True)
+    modified = TimestampField(read_only=True)
 
     def get_current_client_id(self):
         request = self.context.get('request')
         token_info = request.auth
-        return token_info['client_id'] if 'client_id' in token_info else None
+        return token_info['client_id'] if token_info is not None and 'client_id' in token_info else None
 
     def get_owner(self):
         client_id = self.get_current_client_id()
@@ -87,5 +86,5 @@ class MailWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mail
-        fields = ['to_email', 'template', 'payload', 'subject']
-        read_only_fields = ['id', 'html_content', 'plain_content']
+        fields = ['created', 'modified', 'to_email', 'template', 'payload', 'subject']
+        read_only_fields = ['html_content', 'plain_content']

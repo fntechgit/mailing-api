@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.schemas import get_schema_view
 from api.urls import private_urlpatterns as private_api_v1
+from api.views import MailingApiSchemaGenerator
 
 api_urlpatterns = [
     path('v1/',  include(private_api_v1)),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('api/', include(api_urlpatterns)),
     path('admin', admin.site.urls),
     path('openapi', get_schema_view(
+        generator_class=MailingApiSchemaGenerator,
         title="Mailing API",
         description="Mailing API",
         version="1.0.0",

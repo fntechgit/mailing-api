@@ -154,6 +154,6 @@ class ClientEndpointsTest(APITestCase):
 
         client = Client.objects.first()
 
-        url = reverse('mail-template-endpoints:allowed_clients', kwargs={'pk': pk, 'client_id': 1})
+        url = reverse('mail-template-endpoints:allowed_clients', kwargs={'pk': pk, 'client_id': client.id})
         response = self.client.put('{url}'.format(url=url), {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

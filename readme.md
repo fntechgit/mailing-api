@@ -27,6 +27,10 @@ python manage.py migrate
 
 https://docs.djangoproject.com/en/3.0/topics/migrations/
 
+# OpenAPI DOC
+
+http://BASE_URL/openapi?format=openapi-json
+
 # create super user
 
 python manage.py createsuperuser

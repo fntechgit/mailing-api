@@ -2,7 +2,6 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-
 from . import TimestampField
 from ..models import Client
 
@@ -17,6 +16,8 @@ class ClientReadSerializer(serializers.ModelSerializer):
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):
+    created = TimestampField(read_only=True)
+    modified = TimestampField(read_only=True)
 
     def validate(self, data):
         client_id = data['client_id'] if 'client_id' in data else None

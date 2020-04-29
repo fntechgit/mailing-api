@@ -9,12 +9,40 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIV
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import StaticHTMLRenderer
 from rest_framework.response import Response
-
+from rest_framework.schemas.openapi import AutoSchema
 from .exceptions import EntityNotFound
 from ..models import MailTemplate, Client
 from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import MailTemplateReadSerializer, MailTemplateWriteSerializer
-from ..utils import config, JinjaRender
+from ..utils import JinjaRender, config
+
+
+class CustomClientSchema(AutoSchema):
+    def _get_serializer(self, method, path):
+        if method == 'GET':
+            return MailTemplateReadSerializer()
+        return MailTemplateWriteSerializer()
+
+    def get_security(self, scopes):
+        return {
+            'OAuth2' : scopes
+        }
+
+    def get_operation(self, path, method):
+        operation = super().get_operation(path, method)
+        path = '/api{path}'.format(path=path)
+        endpoints = config('OAUTH2.CLIENT.ENDPOINTS')
+
+        method = str(method).lower()
+        endpoint = endpoints[path] if path in endpoints else None
+        endpoint = endpoint[method] if endpoint is not None and method in endpoint else None
+
+        if endpoint:
+            operation['operationId'] = str(endpoint['name'])
+            operation['description'] = str(endpoint['desc'])
+            operation['security'] = self.get_security(str(endpoint['scopes']))
+
+        return operation
 
 
 class MailTemplateFilter(FilterSet):
@@ -32,6 +60,7 @@ class MailTemplateFilter(FilterSet):
 class MailTemplateListCreateAPIView(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = MailTemplateFilter
+    schema = CustomClientSchema()
     # ordering
     ordering_fields = ['id', 'created', 'updated', 'subject', 'identifier', 'is_active', 'max_retries', 'locale']
     ordering = ['id']
@@ -42,15 +71,15 @@ class MailTemplateListCreateAPIView(ListCreateAPIView):
         return MailTemplate.objects.get_queryset().order_by('id')
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.request.method == 'POST':
+        if self.request is not None and self.request.method == 'POST':
             return MailTemplateWriteSerializer
         return MailTemplateReadSerializer
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.LIST_TEMPLATES'))
+    @oauth2_scope_required()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.ADD_TEMPLATE'))
+    @oauth2_scope_required()
     def post(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling MailTemplateCreateAPIView::post')
@@ -66,6 +95,7 @@ class MailTemplateListCreateAPIView(ListCreateAPIView):
 class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)
+    schema = CustomClientSchema()
 
     def get_queryset(self):
         pk = self.kwargs['pk'] if 'pk' in self.kwargs else 0
@@ -74,16 +104,15 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         return MailTemplate.objects.get_queryset().order_by('id')
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.request.method == 'GET':
-            return MailTemplateReadSerializer(
-                expand=self.request.QUERY_PARAMS['expand'] if 'expand' in self.request.QUERY_PARAMS else None)
+        if self.request is not None and self.request.method == 'GET':
+            return MailTemplateReadSerializer
         return MailTemplateWriteSerializer
 
-    @oauth2_scope_required(required_scope=config('OOAUTH2.CLIENT.SCOPES.READ_TEMPLATE'))
+    @oauth2_scope_required()
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.UPDATE_TEMPLATE'))
+    @oauth2_scope_required()
     def put(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling MailTemplateRetrieveUpdateDestroyAPIView::put')
@@ -98,7 +127,7 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     def patch(self, request, *args, **kwargs):
         pass
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.DELETE_TEMPLATE'))
+    @oauth2_scope_required()
     def delete(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling MailTemplateRetrieveUpdateDestroyAPIView::destroy')
@@ -114,11 +143,13 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class RenderMailTemplateAPIView(GenericAPIView):
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)
+    serializer_class = MailTemplateReadSerializer
+    schema = CustomClientSchema()
 
     def get_queryset(self):
         return MailTemplate.objects.get_queryset().order_by('id')
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.RENDER_TEMPLATE'))
+    @oauth2_scope_required()
     def put(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling MailTemplateRetrieveUpdateDestroyAPIView::put')
@@ -139,15 +170,17 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)
     renderer_classes = (StaticHTMLRenderer,)
+    serializer_class = MailTemplateReadSerializer
+    schema = CustomClientSchema()
 
     def get_queryset(self):
         return MailTemplate.objects.get_queryset().order_by('id')
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.TEMPLATE_ADD_ALLOWED_CLIENT'))
+    @oauth2_scope_required()
     def put(self,request, pk, client_id,  *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling MailTemplateAllowedClientsAPIView::put')
-            template = MailTemplate.objects.filter(pk=client_id).first()
+            template = MailTemplate.objects.filter(pk=pk).first()
             if not template:
                 raise EntityNotFound()
             client = Client.objects.filter(pk=client_id).first()
@@ -174,11 +207,11 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
             logging.getLogger('api').error(sys.exc_info())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.TEMPLATE_DELETE_ALLOWED_CLIENT'))
+    @oauth2_scope_required()
     def delete(self, request, pk, client_id, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling MailTemplateAllowedClientsAPIView::delete')
-            template = MailTemplate.objects.filter(pk=client_id).first()
+            template = MailTemplate.objects.filter(pk=pk).first()
             if not template:
                 raise EntityNotFound()
             client = Client.objects.get(pk=client_id)

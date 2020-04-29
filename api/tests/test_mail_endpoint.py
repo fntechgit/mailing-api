@@ -95,6 +95,7 @@ class EmailEndpointsTests(APITestCase):
         self.child.allowed_clients.add(client)
 
     def test_send(self):
+
         url = reverse('mail-endpoints:list-send')
 
         data = {
@@ -110,3 +111,5 @@ class EmailEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         print(response.content)
         json_response = json.loads(response.content)
+        self.assertTrue('to_email' in json_response)
+        self.assertEqual(json_response['to_email'], 'smarcet@gmail.com')
