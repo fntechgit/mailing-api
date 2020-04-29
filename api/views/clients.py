@@ -40,11 +40,11 @@ class ClientListCreateAPIView(ListCreateAPIView):
             return ClientWriteSerializer
         return ClientReadSerializer
 
-    @oauth2_scope_required(required_scope=config('OAUTH2_SCOPE_LIST_CLIENTS'))
+    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.LIST_CLIENTS'))
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    @oauth2_scope_required(required_scope=config('OAUTH2_SCOPE_ADD_CLIENT'))
+    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.ADD_CLIENT'))
     def post(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling ClientListCreateAPIView::post')
@@ -72,11 +72,11 @@ class ClientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             return ClientReadSerializer
         return ClientWriteSerializer
 
-    @oauth2_scope_required(required_scope=config('OAUTH2_SCOPE_READ_CLIENT'))
+    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.READ_CLIENT'))
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
-    @oauth2_scope_required(required_scope=config('OAUTH2_SCOPE_UPDATE_CLIENT'))
+    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.UPDATE_CLIENT'))
     def put(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling ClientRetrieveUpdateDestroyAPIView::put')
@@ -91,7 +91,7 @@ class ClientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     def patch(self, request, *args, **kwargs):
         pass
 
-    @oauth2_scope_required(required_scope=config('OAUTH2_SCOPE_DELETE_CLIENT'))
+    @oauth2_scope_required(required_scope=config('OAUTH2.CLIENT.SCOPES.DELETE_CLIENT'))
     def delete(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling ClientRetrieveUpdateDestroyAPIView::destroy')
