@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from .models import MailTemplate, Client, Mail
 # custom models
 from .utils import config
-
+from django.forms.widgets import DateTimeInput
 admin.site.site_header = _('Mailing API Admin')
 
 
@@ -61,6 +61,29 @@ class MailTemplateAdmin(admin.ModelAdmin):
         js = ('//cdn.ckeditor.com/4.14.0/standard/ckeditor.js',)
 
 
+class MailForm(forms.ModelForm):
+    sent_date = forms.DateTimeField(
+        required=False,
+        widget=DateTimeInput(attrs={'type': 'datetime-local'}),
+    )
+
+    next_retry_date = forms.DateTimeField(
+        required=False,
+        widget=DateTimeInput(attrs={'type': 'datetime-local'}),
+    )
+
+    class Meta:
+        model = Mail
+        fields = '__all__'
+
+    def clean(self):
+        return self.cleaned_data
+
+
+class MailAdmin(admin.ModelAdmin):
+    form = MailForm
+
+
 admin.site.register(MailTemplate, MailTemplateAdmin)
 admin.site.register(Client)
-admin.site.register(Mail)
+admin.site.register(Mail, MailAdmin)

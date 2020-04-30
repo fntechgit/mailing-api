@@ -61,6 +61,7 @@ class MailFilter(FilterSet):
             return queryset.filter(sent_date__isnull=False)
         return queryset.filter(sent_date__isnull=True)
 
+
 class MailListCreateAPIView(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = MailFilter

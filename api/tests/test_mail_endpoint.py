@@ -108,8 +108,6 @@ class EmailEndpointsTests(APITestCase):
         }
 
         response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token = self.access_token), data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        print(response.content)
         json_response = json.loads(response.content)
-        self.assertTrue('to_email' in json_response)
-        self.assertEqual(json_response['to_email'], 'smarcet@gmail.com')
+        print(json_response)
+        self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)

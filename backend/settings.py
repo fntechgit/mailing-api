@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'django_extensions',
+    'django_injector',
     'api.apps.ApiConfig',
 ]
 
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_injector.middleware.inject_request_middleware',
 ]
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-ROOT_URLCONF
@@ -400,3 +402,7 @@ SUPPORTED_LOCALES = {
     'es': 'Spanish',
     'fr': 'French',
 }
+
+INJECTOR_MODULES = ['api.ioc.ApiAppModule']
+
+SEND_EMAILS_JOB_BATCH = os.getenv('SEND_EMAILS_JOB_BATCH', 10000)

@@ -20,6 +20,7 @@ class MailReadSerializer(serializers.ModelSerializer):
 
 
 class MailWriteSerializer(serializers.ModelSerializer):
+
     template = serializers.PrimaryKeyRelatedField(many=False, queryset=MailTemplate.objects.all(), required=True,
                                                   allow_null=False)
     payload = serializers.JSONField()
@@ -47,16 +48,20 @@ class MailWriteSerializer(serializers.ModelSerializer):
         validate_email = EmailValidator()
         to_email = data['to_email'] if 'to_email' in data else None
         subject = data['subject'] if 'subject' in data else None
+
         owner = self.get_owner()
         if owner is None:
             raise ValidationError(_("owner is mandatory"))
+
         template = data['template'] if 'template' in data else None
 
         if is_empty(to_email):
             raise ValidationError(_("to_email is mandatory"))
+
         # validate if its a list of emails
         for r in to_email.split(','):
             validate_email(r)
+
         if template is None:
             raise ValidationError(_("template is mandatory"))
 
