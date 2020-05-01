@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+import pytz
 from django.db import transaction
 from django.db.models import F
 from django.db.models import Q
@@ -28,7 +29,7 @@ class SendGridEmailService(EmailService):
         for m in Mail.objects.filter(
                 Q(sent_date__isnull=True) &
                 (
-                        Q(next_retry_date__isnull=True) | Q(next_retry_date__lte=datetime.utcnow())
+                        Q(next_retry_date__isnull=True) | Q(next_retry_date__lte=datetime.utcnow().replace(tzinfo=pytz.UTC))
                 )
         ).filter(template__max_retries__gt=F('retries')).order_by('id'):
             if self._send_email(m):

@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
 
+import pytz
 from django.db import models
 from model_utils.models import TimeStampedModel
-from .mail_template import MailTemplate
+
 from .client import Client
+from .mail_template import MailTemplate
 
 
 class Mail(TimeStampedModel):
@@ -27,7 +29,7 @@ class Mail(TimeStampedModel):
         if self.retries < self.template.max_retries:
             self.last_error = last_error
             self.retries += 1
-            self.next_retry_date = datetime.utcnow() + timedelta(hours=(1*self.retries))
+            self.next_retry_date = datetime.utcnow().replace(tzinfo=pytz.UTC) + timedelta(hours=(1*self.retries))
 
     def mark_as_sent(self):
-        self.sent_date = datetime.utcnow()
+        self.sent_date = datetime.utcnow().replace(tzinfo=pytz.UTC)
