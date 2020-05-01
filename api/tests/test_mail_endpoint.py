@@ -1,12 +1,16 @@
-from django.urls import reverse
-from rest_framework.test import APITestCase
-from ..models import MailTemplate, Mail, Client
-from rest_framework import status
-import io
-import logging, os
 import json
 import random
 import string
+
+from django.apps import apps
+from django.urls import reverse
+from injector import Injector
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from .test_ioc import TestApiAppModule
+from ..models import Client
+from ..models import MailTemplate
 
 
 class EmailEndpointsTests(APITestCase):
@@ -18,7 +22,9 @@ class EmailEndpointsTests(APITestCase):
         return ''.join(random.choice(letters) for i in range(str_len))
 
     def setUp(self):
-        self.access_token = os.environ.get('ACCESS_TOKEN')
+        apps.app_configs['django_injector'].injector = Injector([TestApiAppModule()])
+        # create a mock token
+        self.access_token = self.randomString(25)
         client = Client.objects.create(client_id="4zOaAu.JjXRT5eH3B~6-~AxtH06SPBZP.openstack.client")
         html_content = '''
        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -84,6 +90,7 @@ class EmailEndpointsTests(APITestCase):
         '''
 
         self.child = MailTemplate.objects.create(
+            from_email='admin@admin.com',
             identifier="id_{suffix}".format(suffix=self.randomString(10)),
             is_active=True,
             subject="subject {suffix}".format(suffix=self.randomString(10)),
@@ -94,7 +101,7 @@ class EmailEndpointsTests(APITestCase):
 
         self.child.allowed_clients.add(client)
 
-    def test_send(self):
+    def test_send_fail_invalid_to(self):
 
         url = reverse('mail-endpoints:list-send')
 
@@ -103,11 +110,27 @@ class EmailEndpointsTests(APITestCase):
               'title': 'this is the title',
               'content': 'this is the content',
           },
-          'to_email': 'smarcet@gmail.com',
+          'to_email': 'smarcet@gmail.com,sebastian@tipit',
           'template' : self.child.id,
         }
 
         response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token = self.access_token), data, format='json')
         json_response = json.loads(response.content)
-        print(json_response)
         self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)
+
+    def test_send_ok(self):
+        url = reverse('mail-endpoints:list-send')
+
+        data = {
+            'payload': {
+                'title': 'this is the title',
+                'content': 'this is the content',
+            },
+            'to_email': 'smarcet@gmail.com,sebastian@tipit.net',
+            'template': self.child.id,
+        }
+
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token),
+                                    data, format='json')
+        json_response = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

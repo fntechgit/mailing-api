@@ -40,7 +40,7 @@ class MailWriteSerializer(serializers.ModelSerializer):
 
         client = Client.objects.filter(client_id=client_id).first()
         if client is None:
-            raise ValidationError(_('client {client_id} is not registered'.format(client_id=client_id)))
+            raise ValidationError(_('client {client_id} is not registered.'.format(client_id=client_id)))
 
         return client
 
@@ -51,23 +51,26 @@ class MailWriteSerializer(serializers.ModelSerializer):
 
         owner = self.get_owner()
         if owner is None:
-            raise ValidationError(_("owner is mandatory"))
+            raise ValidationError(_("owner is mandatory."))
 
         template = data['template'] if 'template' in data else None
 
         if is_empty(to_email):
-            raise ValidationError(_("to_email is mandatory"))
+            raise ValidationError(_("to_email is mandatory."))
 
         # validate if its a list of emails
         for r in to_email.split(','):
             validate_email(r)
 
         if template is None:
-            raise ValidationError(_("template is mandatory"))
+            raise ValidationError(_("template is mandatory."))
+
+        if not template.is_active:
+            raise ValidationError(_("template is not active."))
 
         if not template.is_allowed_client(owner.id):
             raise ValidationError(_(
-                "client {client_id} is not allowed to send emails template of type {type_id}".format(client_id=owner.id,
+                "client {client_id} is not allowed to send emails template of type {type_id}.".format(client_id=owner.id,
                                                                                                      type_id=template.id)))
         data['owner'] = owner
 
@@ -83,6 +86,17 @@ class MailWriteSerializer(serializers.ModelSerializer):
         plain, html = render.render(instance.template, payload, True)
         instance.html_content = html
         instance.plain_content = plain
+        instance.from_email = instance.template.from_email
+
+        if is_empty(instance.from_email):
+            raise ValidationError(_("from_email is mandatory."))
+
+        if is_empty(instance.subject):
+            raise ValidationError(_("subject is mandatory."))
+
+        if is_empty(instance.plain_content) and is_empty(instance.html_content):
+            raise ValidationError(_("content is mandatory (HTML/PLAIN)."))
+
         instance.save()
 
         logging.getLogger('serializers').debug('MailWriteSerializer.create plain_content {plain_content} html_content '

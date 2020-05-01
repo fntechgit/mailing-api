@@ -1,5 +1,4 @@
 import logging
-import os
 import re
 
 from django.contrib.admindocs.views import simplify_regex
@@ -34,11 +33,6 @@ def oauth2_scope_required():
             logging.getLogger('oauth2').debug('endpoint {method} {path}'.format(method=method, path=path))
 
             endpoints = config('OAUTH2.CLIENT.ENDPOINTS')
-
-            env = os.environ.get('ENV')
-            # break validation on test
-            if env == 'test' and token_info is None:
-                return func(view, *args, **kwargs)
 
             if token_info is None:
                 raise PermissionDenied(_("token info not present."))

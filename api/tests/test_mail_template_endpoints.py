@@ -2,10 +2,14 @@ import json
 import random
 import string
 
+from django.apps import apps
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
+from injector import Injector
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from .test_ioc import TestApiAppModule
 from ..models import Client, MailTemplate
 
 
@@ -16,7 +20,9 @@ class ClientEndpointsTest(APITestCase):
         return ''.join(random.choice(letters) for i in range(str_len))
 
     def setUp(self):
-        letters = string.ascii_lowercase
+        apps.app_configs['django_injector'].injector = Injector([TestApiAppModule()])
+        # create a mock token
+        self.access_token = self.randomString(25)
         client = None
         for i in range(10):
             client = Client.objects.create(client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)))
@@ -41,7 +47,7 @@ class ClientEndpointsTest(APITestCase):
 
     def test_get_all(self):
         url = reverse('mail-template-endpoints:list-create')
-        response = self.client.get('{url}?page=2&per_page=5&expand=parent'.format(url=url))
+        response = self.client.get('{url}?page=2&per_page=5&expand=parent&access_token={access_token}'.format(url=url, access_token=self.access_token))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print(response.content)
         json_response = json.loads(response.content)
@@ -81,7 +87,7 @@ class ClientEndpointsTest(APITestCase):
             'subject': 'test subject',
         }
 
-        response = self.client.post('{url}'.format(url=url), data, format='json')
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         print(response.content)
         json_response = json.loads(response.content)
@@ -117,18 +123,18 @@ class ClientEndpointsTest(APITestCase):
             'subject': 'test subject',
         }
 
-        response = self.client.post('{url}'.format(url=url), data, format='json')
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         print(response.content)
         json_response = json.loads(response.content)
         url = reverse('mail-template-endpoints:render', kwargs={'pk': json_response['id']})
         data = {
-            'footer' : "this is the footer content",
-            'content' : 'this is the content',
+            'footer': "this is the footer content",
+            'content': 'this is the content',
             'title': 'this is title content'
         }
 
-        response = self.client.put('{url}'.format(url=url), data, format='json')
+        response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
         print(response.content)
         self.assertContains(response, "this is title content", 1)
         self.assertContains(response, "this is the footer content", 1)
@@ -144,7 +150,7 @@ class ClientEndpointsTest(APITestCase):
             'subject': 'test subject',
         }
 
-        response = self.client.post('{url}'.format(url=url), data, format='json')
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         print(response.content)
         json_response = json.loads(response.content)
@@ -155,5 +161,60 @@ class ClientEndpointsTest(APITestCase):
         client = Client.objects.first()
 
         url = reverse('mail-template-endpoints:allowed_clients', kwargs={'pk': pk, 'client_id': client.id})
-        response = self.client.put('{url}'.format(url=url), {}, format='json')
+        response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_add_update_activate_fails(self):
+        url = reverse('mail-template-endpoints:list-create')
+
+        data = {
+            'identifier': 'identifier_1',
+            'locale': 'es',
+            'from_email': 'test@test.com',
+            'subject': 'test subject',
+        }
+
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(response.content)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response['identifier'], 'identifier_1')
+
+        pk = int(json_response['id'])
+
+        data = {
+            'is_active': True
+        }
+        url = reverse('mail-template-endpoints:retrieve_update_destroy', kwargs={'pk': pk})
+        response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response[0],
+                         _('If you activate the template at least should have a body content (HTML/PLAIN)'))
+
+    def test_add_update_activate_ok(self):
+        url = reverse('mail-template-endpoints:list-create')
+
+        data = {
+            'identifier': 'identifier_1',
+            'locale': 'es',
+            'from_email': 'test@test.com',
+            'subject': 'test subject',
+        }
+
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(response.content)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response['identifier'], 'identifier_1')
+
+        pk = int(json_response['id'])
+
+        data = {
+            'html_content': 'Hello {{username}}!',
+            'is_active': True
+        }
+        url = reverse('mail-template-endpoints:retrieve_update_destroy', kwargs={'pk': pk})
+        response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_response = json.loads(response.content)

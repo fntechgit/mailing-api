@@ -58,7 +58,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         is_active = validated_data['is_active']
 
         if is_active and not has_content:
-            raise ValidationError(_("Is you activate the template at least should have a body content (HTML/PLAIN)"))
+            raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)"))
 
         return super().create(validated_data)
 
@@ -69,7 +69,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         has_content_on_db = not is_empty(instance.html_content) or not is_empty(instance.plain_content)
         is_active_for_update = validated_data['is_active'] if 'is_active' in validated_data else None
         if is_active_for_update and not has_content_for_update and not has_content_on_db:
-            raise ValidationError(_("Is you activate the template at least should have a body content (HTML/PLAIN)"))
+            raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)"))
 
         return super().update(instance, validated_data)
 
