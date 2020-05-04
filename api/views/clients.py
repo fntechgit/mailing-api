@@ -48,6 +48,7 @@ class ClientFilter(FilterSet):
         model = Client
         fields = {
             'client_id': ['contains'],
+            'name': ['contains'],
         }
 
 
@@ -56,7 +57,7 @@ class ClientListCreateAPIView(ListCreateAPIView):
     filterset_class = ClientFilter
     schema = CustomClientSchema()
     # ordering
-    ordering_fields = ['id', 'created', 'updated', 'client_id']
+    ordering_fields = ['id', 'created', 'updated', 'client_id', 'name']
     ordering = ['id']
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)

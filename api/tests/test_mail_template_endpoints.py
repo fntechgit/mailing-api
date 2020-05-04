@@ -25,7 +25,11 @@ class ClientEndpointsTest(APITestCase):
         self.access_token = self.randomString(25)
         client = None
         for i in range(10):
-            client = Client.objects.create(client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)))
+            client = Client.objects.create\
+                (
+                    client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)),
+                    name="OAUTH2_CLIENT_NAME_{suffix}".format(suffix=self.randomString(10)),
+                )
         parent = MailTemplate.objects.create(
             identifier="parent_{suffix}".format(suffix=self.randomString(10)),
             is_active=True,

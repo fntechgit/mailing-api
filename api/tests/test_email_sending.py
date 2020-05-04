@@ -23,7 +23,11 @@ class EmailSendingTests(APITestCase):
         apps.app_configs['django_injector'].injector = Injector([TestApiAppModule()])
         # create a mock token
         self.access_token = self.randomString(25)
-        client = Client.objects.create(client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)))
+        client = Client.objects.create\
+            (
+                client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)),
+                name="OAUTH2_CLIENT_NAME_{suffix}".format(suffix=self.randomString(10)),
+            )
 
         parent_html_content = '''
                               <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"

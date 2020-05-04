@@ -25,7 +25,10 @@ class EmailEndpointsTests(APITestCase):
         apps.app_configs['django_injector'].injector = Injector([TestApiAppModule()])
         # create a mock token
         self.access_token = self.randomString(25)
-        client = Client.objects.create(client_id="4zOaAu.JjXRT5eH3B~6-~AxtH06SPBZP.openstack.client")
+        client = Client.objects.create(
+            client_id="4zOaAu.JjXRT5eH3B~6-~AxtH06SPBZP.openstack.client",
+            name="OAUTH2_CLIENT_NAME_{suffix}".format(suffix=self.randomString(10)),
+        )
         html_content = '''
        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

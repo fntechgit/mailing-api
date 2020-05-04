@@ -23,7 +23,10 @@ class ClientEndpointsTest(APITestCase):
         # create a mock token
         self.access_token = self.randomString(25)
         for i in range(10):
-            Client.objects.create(client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)))
+            Client.objects.create(
+                client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)),
+                name="OAUTH2_CLIENT_NAME_{suffix}".format(suffix=self.randomString(10)),
+            )
 
     def test_get_all(self):
         url = reverse('client-endpoints:list-create')
@@ -38,6 +41,7 @@ class ClientEndpointsTest(APITestCase):
 
         data = {
             'client_id': 'CLIENT_ID_1',
+            'name': 'NAME_1'
         }
 
         response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
@@ -51,6 +55,7 @@ class ClientEndpointsTest(APITestCase):
 
         data = {
             'client_id': 'CLIENT_ID_1',
+            'name': 'NAME_1'
         }
 
         response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
@@ -64,6 +69,7 @@ class ClientEndpointsTest(APITestCase):
 
         data = {
             'client_id': 'CLIENT_ID_12',
+            'name': 'NAME_1'
         }
 
         response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
@@ -77,6 +83,7 @@ class ClientEndpointsTest(APITestCase):
 
         data = {
             'client_id': 'CLIENT_ID_1',
+            'name': 'NAME_1'
         }
 
         response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')

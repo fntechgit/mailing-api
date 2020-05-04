@@ -50,7 +50,7 @@ class TestModels(TestCase):
 
         child = MailTemplate.objects.create(identifier="1", from_email='test@test.com', html_content=child_body, is_active=True)
 
-        client = Client.objects.create(client_id="OAUTH2_CLIENT_ID")
+        client = Client.objects.create(client_id="OAUTH2_CLIENT_ID", name="NAME_1")
 
         child.allowed_clients.add(client)
 

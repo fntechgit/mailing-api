@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from . import TimestampField
 from ..models import Client
+from ..utils import is_empty
 
 
 class ClientReadSerializer(serializers.ModelSerializer):
@@ -21,15 +22,15 @@ class ClientWriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         client_id = data['client_id'] if 'client_id' in data else None
+        name = data['name'] if 'name' in data else None
         is_update = self.instance is not None
 
         # only mandatory on add
-        if not client_id:
+        if is_empty(client_id):
             raise ValidationError(_('Client Id is not set.'))
 
-        # only mandatory on add
-        if not type and not is_update:
-            raise ValidationError(_('Type is not set.'))
+        if is_empty(name):
+            raise ValidationError(_('Name is not set.'))
 
         # enforce unique IDX
         query = Client.objects.filter(client_id=client_id)
@@ -37,7 +38,14 @@ class ClientWriteSerializer(serializers.ModelSerializer):
             query = query.filter(~Q(pk=self.instance.id))
 
         if query.count() > 0:
-            raise ValidationError(_('Already exist a Client Id.'))
+            raise ValidationError(_('Already exist Client Id.'))
+
+        query = Client.objects.filter(name=name)
+        if is_update:
+            query = query.filter(~Q(pk=self.instance.id))
+
+        if query.count() > 0:
+            raise ValidationError(_('Already exist Name'))
 
         return data
 
