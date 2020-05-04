@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
-from jinja2 import Environment, DictLoader, meta
+from jinja2 import Environment, DictLoader, meta, TemplateSyntaxError
 from rest_framework.serializers import ValidationError
-
+import logging
 from ..models import MailTemplate
 from api.utils import Render
 from api.utils.empty_str import is_empty
@@ -60,30 +60,35 @@ class JinjaRender(Render):
         return r
 
     def render(self, mail_template: MailTemplate, data: dict, validate_data: bool) -> tuple:
-        html_content = mail_template.html_content
-        plain_content = mail_template.plain_content
-        html_parent_content = None
-        plain_parent_content = None
+        try:
+            html_content = mail_template.html_content
+            plain_content = mail_template.plain_content
+            html_parent_content = None
+            plain_parent_content = None
 
-        if mail_template.has_parent:
-            html_parent_content = mail_template.get_parent_html_content()
-            plain_parent_content = mail_template.get_parent_plain_content()
+            if mail_template.has_parent:
+                html_parent_content = mail_template.get_parent_html_content()
+                plain_parent_content = mail_template.get_parent_plain_content()
 
-        html_render = None
-        plain_render = None
-        has_content = False
+            html_render = ''
+            plain_render = ''
+            has_content = False
 
-        if not is_empty(html_content):
-            has_content = True
-            html_render = self._render_content(html_content, html_parent_content, data, validate_data)
+            if not is_empty(html_content):
+                has_content = True
+                html_render = self._render_content(html_content, html_parent_content, data, validate_data)
 
-        if not is_empty(plain_content):
-            has_content = True
-            plain_render = self._render_content(plain_content, plain_parent_content, data, validate_data)
+            if not is_empty(plain_content):
+                has_content = True
+                plain_render = self._render_content(plain_content, plain_parent_content, data, validate_data)
 
-        if not has_content:
-            raise ValidationError(_("missing content (HTML or Plain)"))
+            if not has_content:
+                raise ValidationError(_("missing content (HTML or Plain)"))
 
-        return plain_render, html_render
+            return plain_render, html_render
+        except TemplateSyntaxError as e:
+            logging.getLogger('api').warning(e)
+            raise ValidationError(_("Invalid template syntax."))
+
 
 

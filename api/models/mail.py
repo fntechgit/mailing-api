@@ -31,5 +31,9 @@ class Mail(TimeStampedModel):
             self.retries += 1
             self.next_retry_date = datetime.utcnow().replace(tzinfo=pytz.UTC) + timedelta(hours=(1*self.retries))
 
+    @property
+    def is_sent(self)-> bool:
+        return self.sent_date is not None
+
     def mark_as_sent(self):
         self.sent_date = datetime.utcnow().replace(tzinfo=pytz.UTC)
