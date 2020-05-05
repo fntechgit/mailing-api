@@ -52,6 +52,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         html_content = validated_data['html_content'] if 'html_content' in validated_data else None
         plain_content = validated_data['plain_content'] if 'plain_content' in validated_data else None
         has_content = not is_empty(html_content) or not is_empty(plain_content)
+        parent = validated_data['parent'] if 'parent' in validated_data else None
         if 'is_active' not in validated_data:
             validated_data['is_active'] = False
 
@@ -59,6 +60,8 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
 
         if is_active and not has_content:
             raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)"))
+        if is_active and parent and not parent.is_active:
+            raise ValidationError(_("If you activate the template, parent should be activated too."))
 
         return super().create(validated_data)
 
@@ -70,7 +73,6 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         is_active_for_update = validated_data['is_active'] if 'is_active' in validated_data else None
         if is_active_for_update and not has_content_for_update and not has_content_on_db:
             raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)"))
-
         return super().update(instance, validated_data)
 
     def validate(self, data):
@@ -96,7 +98,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
 
         is_update = self.instance is not None
         # validate parent ( parent should be a root , that is parent.parent_id = 0 )
-        if parent and parent.parent_id > 0:
+        if parent and parent.has_parent() :
             raise ValidationError(_("Parent should be a root on the hierarchy."))
 
         if is_empty(from_email) and not is_update:

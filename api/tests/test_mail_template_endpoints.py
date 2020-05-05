@@ -30,7 +30,7 @@ class ClientEndpointsTest(APITestCase):
                     client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)),
                     name="OAUTH2_CLIENT_NAME_{suffix}".format(suffix=self.randomString(10)),
                 )
-        parent = MailTemplate.objects.create(
+        self.parent = MailTemplate.objects.create(
             identifier="parent_{suffix}".format(suffix=self.randomString(10)),
             is_active=True,
             subject="subject {suffix}".format(suffix=self.randomString(10)),
@@ -44,7 +44,7 @@ class ClientEndpointsTest(APITestCase):
                 subject="subject {suffix}".format(suffix=self.randomString(10)),
                 plain_content="content {suffix}".format(suffix=self.randomString(10)),
                 html_content="<p>content {suffix}</p>".format(suffix=self.randomString(10)),
-                parent=parent
+                parent=self.parent
             )
             child.allowed_clients.add(client)
             # child.save()
@@ -138,7 +138,7 @@ class ClientEndpointsTest(APITestCase):
             'title': 'this is title content'
         }
 
-        response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
+        response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), {'payload': data}, format='json')
         print(response.content)
         self.assertContains(response, "this is title content", 1)
         self.assertContains(response, "this is the footer content", 1)
@@ -213,10 +213,18 @@ class ClientEndpointsTest(APITestCase):
         self.assertEqual(json_response['identifier'], 'identifier_1')
 
         pk = int(json_response['id'])
-
+        client = Client.objects.first()
         data = {
+            'parent'
             'html_content': 'Hello {{username}}!',
-            'is_active': True
+            'is_active': False,
+            'max_retries':2,
+            'allowed_clients': [client.id],
+            'parent': self.parent.id,
+            'locale': 'en',
+            "html_content": "{%- extends 'layout' %}a content",
+            "plain_content": "{%- extends 'layout' %}plain",
+            "from_email": "santis@santis.com"
         }
         url = reverse('mail-template-endpoints:retrieve_update_destroy', kwargs={'pk': pk})
         response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')

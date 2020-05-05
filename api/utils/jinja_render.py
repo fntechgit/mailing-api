@@ -25,7 +25,8 @@ class JinjaRender(Render):
         if JinjaRender.LAYOUT_FILE in templates:
             ref_templates = list(meta.find_referenced_templates(parsed_content))
             if JinjaRender.LAYOUT_FILE not in ref_templates:
-                raise ValidationError(_("You need to define a {%- extends 'layout' %} on your child template."))
+                raise ValidationError(_("You need to define a {%- extends 'layout' %} block on your child template in "
+                                        "order to use template inheritance."))
 
         return parsed_content
 
