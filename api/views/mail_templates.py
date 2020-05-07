@@ -1,5 +1,5 @@
 import logging
-import sys
+import sys, traceback
 
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import status
@@ -10,6 +10,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import StaticHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
+
 from .exceptions import EntityNotFound
 from ..models import MailTemplate, Client
 from ..security import OAuth2Authentication, oauth2_scope_required
@@ -102,7 +103,7 @@ class MailTemplateListCreateAPIView(ListCreateAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -135,7 +136,7 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, *args, **kwargs):
@@ -150,7 +151,7 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -171,8 +172,8 @@ class RenderMailTemplateAPIView(GenericAPIView):
             if 'payload' not in data:
                 raise ValidationError('payload param is not set.')
             payload = data['payload']
-            if not isinstance(payload, dict):
-                raise ValidationError('payload param is not a dictionary.')
+            #if not isinstance(payload, dict):
+            #    raise ValidationError('payload param is not a dictionary.')
             instance = self.get_object()
             render = JinjaRender()
             plain, html = render.render(instance, payload, True)
@@ -181,7 +182,7 @@ class RenderMailTemplateAPIView(GenericAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -223,7 +224,7 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @oauth2_scope_required()
@@ -254,7 +255,7 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

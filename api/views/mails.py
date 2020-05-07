@@ -1,6 +1,7 @@
 import logging
-import sys
+import traceback
 
+from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -9,7 +10,6 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
-from django_filters import rest_framework as filters
 
 from ..models import Mail
 from ..security import OAuth2Authentication, oauth2_scope_required
@@ -98,5 +98,5 @@ class MailListCreateAPIView(ListCreateAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)

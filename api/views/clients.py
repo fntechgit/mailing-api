@@ -1,5 +1,5 @@
 import logging
-import sys
+import traceback
 
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import status
@@ -83,7 +83,7 @@ class ClientListCreateAPIView(ListCreateAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -116,7 +116,7 @@ class ClientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def patch(self, request, *args, **kwargs):
@@ -131,5 +131,5 @@ class ClientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
         except:
-            logging.getLogger('api').error(sys.exc_info())
+            logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
