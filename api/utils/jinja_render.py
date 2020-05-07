@@ -56,9 +56,7 @@ class JinjaRender(Render):
                 if tk not in data.keys():
                     raise ValidationError(_("Missing template defined variable '{tk}'.".format(tk=tk)))
 
-        r = t.render(**data)
-
-        return r
+        return t.render(**data)
 
     def render(self, mail_template: MailTemplate, data: dict, validate_data: bool) -> tuple:
         try:

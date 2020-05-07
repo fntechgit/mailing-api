@@ -97,7 +97,7 @@ class ClientEndpointsTest(APITestCase):
         json_response = json.loads(response.content)
         self.assertEqual(json_response['identifier'], 'identifier_1')
 
-    def test_render(self):
+    def test_render_ok(self):
         url = reverse('mail-template-endpoints:list-create')
         html_content = '''
                         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -143,6 +143,53 @@ class ClientEndpointsTest(APITestCase):
         self.assertContains(response, "this is title content", 1)
         self.assertContains(response, "this is the footer content", 1)
         self.assertContains(response, "this is the content", 1)
+
+    def test_render_fail(self):
+        url = reverse('mail-template-endpoints:list-create')
+        html_content = '''
+                          <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                  <html xmlns="http://www.w3.org/1999/xhtml">
+                  <head>
+                    <link rel="stylesheet" href="style.css" />
+                    <title>{{title}} - My Webpage</title>
+                  </head>
+                  <body>
+                    <div id="content">
+                    {{content}}
+                    </div>
+
+                    <div id="footer">
+                      {{footer}}
+                      &copy; Copyright 2006 by <a href="http://mydomain.tld">myself</a>.
+                    </div>
+                  </body>
+                          '''
+
+        data = {
+            'identifier': 'identifier_1',
+            'locale': 'es',
+            'html_content': html_content,
+            'from_email': 'test@test.com',
+            'subject': 'test subject',
+        }
+
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token),
+                                    data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(response.content)
+        json_response = json.loads(response.content)
+        url = reverse('mail-template-endpoints:render', kwargs={'pk': json_response['id']})
+        data = {
+            'footer': "this is the footer content",
+            'content': 'this is the content',
+            'title': 'this is title content'
+        }
+        data = json.dumps(data)
+
+        response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token),
+                                   {'payload': data}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)
 
     def test_add_then_add_allowed_client(self):
         url = reverse('mail-template-endpoints:list-create')

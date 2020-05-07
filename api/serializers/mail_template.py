@@ -98,7 +98,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
 
         is_update = self.instance is not None
         # validate parent ( parent should be a root , that is parent.parent_id = 0 )
-        if parent and parent.has_parent() :
+        if parent and parent.has_parent :
             raise ValidationError(_("Parent should be a root on the hierarchy."))
 
         if is_empty(from_email) and not is_update:

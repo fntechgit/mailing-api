@@ -166,11 +166,13 @@ class RenderMailTemplateAPIView(GenericAPIView):
     @oauth2_scope_required()
     def put(self, request, *args, **kwargs):
         try:
-            logging.getLogger('api').debug('calling MailTemplateRetrieveUpdateDestroyAPIView::put')
+            logging.getLogger('api').debug('calling RenderMailTemplateAPIView::put')
             data = request.data
             if 'payload' not in data:
                 raise ValidationError('payload param is not set.')
             payload = data['payload']
+            if not isinstance(payload, dict):
+                raise ValidationError('payload param is not a dictionary.')
             instance = self.get_object()
             render = JinjaRender()
             plain, html = render.render(instance, payload, True)
