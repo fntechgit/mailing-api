@@ -6,13 +6,14 @@ from model_utils.models import TimeStampedModel
 
 from .client import Client
 from .mail_template import MailTemplate
+from jsonfield import JSONField
 
 
 class Mail(TimeStampedModel):
     from_email = models.EmailField(blank=False)
     to_email = models.CharField(max_length=1024, blank=False)
     subject = models.CharField(max_length=256, blank=False)
-    payload = models.TextField(blank=True, default='')
+    payload = JSONField(blank=True, default='')
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
     sent_date = models.DateTimeField(null=True, )

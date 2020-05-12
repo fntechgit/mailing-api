@@ -1,4 +1,6 @@
 import logging
+import random
+import string
 from datetime import datetime
 
 import pytz
@@ -8,6 +10,9 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.serializers import ValidationError
 from sendgrid import sendgrid
+from sendgrid.helpers.mail import (
+    Mail, Attachment, FileContent, FileName,
+    FileType, Disposition, ContentId)
 from sendgrid.helpers.mail import Mail as SendGridMail, Content, To, Email
 
 from api.models import Mail
@@ -39,6 +44,10 @@ class SendGridEmailService(EmailService):
 
         return count
 
+    def _generate_content_id(self, file:dict):
+        letters = string.ascii_letters
+        return 'CID_'.join(random.choice(letters) for i in range(10))
+
     @transaction.atomic
     def _send_email(self, m: Mail) -> bool:
 
@@ -62,6 +71,21 @@ class SendGridEmailService(EmailService):
                 mail.add_content(html_content)
             if plain_content is not None:
                 mail.add_content(plain_content)
+            if m.payload:
+                if 'attachments' in m.payload:
+                    for file in m.payload['attachments']:
+                        if 'content' in file and 'type' in file and 'name' in file:
+                            disposition = file['disposition'] if 'disposition' in file else 'attachment'
+                            attachment = Attachment()
+                            attachment.file_content = FileContent(file['content'])
+                            attachment.file_type = FileType(file['type'])
+                            attachment.file_name = FileName(file['name'])
+                            attachment.disposition = Disposition(disposition)
+                            content_id = file['content_id'] if 'content_id' in file else self._generate_content_id(file)
+                            if disposition == 'inline':
+                                # https://sendgrid.com/blog/embedding-images-emails-facts/
+                                attachment.content_id = ContentId(content_id)
+                            mail.add_attachment(attachment)
 
             # https://sendgrid.com/docs/API_Reference/Web_API_v3/Mail/errors.html
             request_body = mail.get()

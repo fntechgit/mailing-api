@@ -15,7 +15,7 @@ from .exceptions import EntityNotFound
 from ..models import MailTemplate, Client
 from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import MailTemplateReadSerializer, MailTemplateWriteSerializer
-from ..utils import JinjaRender, config
+from ..utils import JinjaRender, config, is_empty
 
 
 class CustomClientSchema(AutoSchema):
@@ -172,12 +172,16 @@ class RenderMailTemplateAPIView(GenericAPIView):
             if 'payload' not in data:
                 raise ValidationError('payload param is not set.')
             payload = data['payload']
-            #if not isinstance(payload, dict):
-            #    raise ValidationError('payload param is not a dictionary.')
+            if not isinstance(payload, dict):
+                raise ValidationError('payload param is not a dictionary.')
             instance = self.get_object()
             render = JinjaRender()
             plain, html = render.render(instance, payload, True)
-            return Response({'plain_content': plain, 'html_content': html }, status=status.HTTP_200_OK)
+            subject = ''
+            if not is_empty(instance.subject):
+                subject = render.render_subject(instance, payload)
+
+            return Response({'plain_content': plain, 'html_content': html, 'subject': subject}, status=status.HTTP_200_OK)
         except ValidationError as e:
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)

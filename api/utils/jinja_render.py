@@ -19,7 +19,8 @@ class JinjaRender(Render):
         self.env = Environment(loader=DictLoader(templates))
         # validate source
         # If you have incorrect syntax, you will get a TemplateSyntaxError
-        template_source = self.env.loader.get_source(self.env, JinjaRender.INDEX_FILE)
+        template_source,_,_ = self.env.loader.get_source(self.env, JinjaRender.INDEX_FILE)
+        template_source = template_source.replace("\\'", "'")
         parsed_content = self.env.parse(template_source)
 
         if JinjaRender.LAYOUT_FILE in templates:
@@ -57,6 +58,16 @@ class JinjaRender(Render):
                     raise ValidationError(_("Missing template defined variable '{tk}'.".format(tk=tk)))
 
         return t.render(**data)
+
+    def render_subject(self, mail_template: MailTemplate, data: dict) -> str:
+        try:
+            subject_content = mail_template.subject
+            if not is_empty(subject_content):
+                return self._render_content(subject_content, '', data, False)
+            return subject_content
+        except TemplateSyntaxError as e:
+            logging.getLogger('api').warning(e)
+            raise ValidationError(_("Invalid template syntax."))
 
     def render(self, mail_template: MailTemplate, data: dict, validate_data: bool) -> tuple:
         try:

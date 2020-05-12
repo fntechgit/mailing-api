@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import string
 
@@ -11,6 +12,9 @@ from rest_framework.test import APITestCase
 from api.models import MailTemplate, Client, Mail
 from .test_ioc import TestApiAppModule
 from ..services.sendgrid_email_service import SendGridEmailService
+import base64
+
+from ..utils import config
 
 
 class EmailSendingTests(APITestCase):
@@ -64,6 +68,7 @@ class EmailSendingTests(APITestCase):
             <h1>{{h1_title}}</h1>
             <p class="important">
               {{content}}
+               <img src="cid:qrcid"/>
             </p>
         {% endblock %}
         '''
@@ -81,13 +86,24 @@ class EmailSendingTests(APITestCase):
 
     def test_email_send(self):
         url = reverse('mail-endpoints:list-send')
+        base_dir = config('BASE_DIR')
+
+        with open(os.path.join(base_dir, "api/test/attachments/ticket.pdf"), "rb")  as pdf_file:
+            pdf_data = base64.b64encode(pdf_file.read())
+
+        with open(os.path.join(base_dir, "api/test/attachments/qr.png"), "rb") as qr_file:
+            image_data = base64.b64encode(qr_file.read())
 
         data = {
             'payload': {
                 'title': 'this is the title',
                 'h1_title': 'this is the subtitle',
                 'content': 'this is the content',
-                'footer': 'this is the footer'
+                'footer': 'this is the footer',
+                'attachments': [
+                    {'name': 'qr.png', 'content':  image_data, 'type': 'application/octet-stream', 'disposition': 'inline',  'content_id': 'qrcid'},
+                    {'name': 'ticket.pdf','content':  pdf_data, 'type': 'application/pdf', 'disposition': 'attachment',}
+                ]
             },
             'to_email': 'smarcet@gmail.com,sebastian@tipit.net',
             'template': self.child.id,

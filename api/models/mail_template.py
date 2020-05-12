@@ -8,7 +8,7 @@ from .client import Client
 class MailTemplate(TimeStampedModel):
 
     from_email = models.EmailField(blank=False, null=False)
-    identifier = models.SlugField(blank=False)
+    identifier = models.SlugField(blank=False, max_length=256)
     subject = models.CharField(max_length=256, blank=False, null=False)
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
