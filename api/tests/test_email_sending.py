@@ -18,6 +18,7 @@ from ..utils import config
 
 
 class EmailSendingTests(APITestCase):
+    fixtures = ["mailtemplates.json"]
 
     def randomString(self, str_len):
         letters = string.ascii_letters
@@ -27,82 +28,46 @@ class EmailSendingTests(APITestCase):
         apps.app_configs['django_injector'].injector = Injector([TestApiAppModule()])
         # create a mock token
         self.access_token = self.randomString(25)
-        client = Client.objects.create\
-            (
+        client = Client.objects.create \
+                (
                 client_id="OAUTH2_CLIENT_ID_{suffix}".format(suffix=self.randomString(10)),
                 name="OAUTH2_CLIENT_NAME_{suffix}".format(suffix=self.randomString(10)),
             )
 
-        parent_html_content = '''
-                              <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-                      <html xmlns="http://www.w3.org/1999/xhtml">
-                      <head>
-                        <link rel="stylesheet" href="style.css" />
-                        <title>{{title}} - My Webpage</title>
-                      </head>
-                      <body>
-                        <div id="content">
-                        {% block content %}
-                        {% endblock %}
-                        </div>
-
-                        <div id="footer">
-                          {{footer}}
-                          &copy; Copyright 2006 by <a href="http://mydomain.tld">myself</a>.
-                        </div>
-                      </body>
-                              '''
-
-        parent = MailTemplate.objects.create(
-            identifier="parent_{suffix}".format(suffix=self.randomString(10)),
-            is_active=True,
-            subject="subject {suffix}".format(suffix=self.randomString(10)),
-            html_content=parent_html_content,
-        )
-
-        child_html_content = '''
-        {% extends "layout" %}
-        
-        {% block content %}
-            <h1>{{h1_title}}</h1>
-            <p class="important">
-              {{content}}
-               <img src="cid:qrcid"/>
-            </p>
-        {% endblock %}
-        '''
-
-        self.child = MailTemplate.objects.create(
-            identifier="id_{suffix}".format(suffix=self.randomString(10)),
-            is_active=True,
-            subject="subject {suffix}".format(suffix=self.randomString(10)),
-            html_content=child_html_content,
-            parent=parent,
-            from_email='smarcet@gmail.com'
-        )
+        self.child = MailTemplate.objects.get(pk=4)
         self.child.allowed_clients.add(client)
-
 
     def test_email_send(self):
         url = reverse('mail-endpoints:list-send')
         base_dir = config('BASE_DIR')
 
-        with open(os.path.join(base_dir, "api/test/attachments/ticket.pdf"), "rb")  as pdf_file:
+        with open(os.path.join(base_dir, "api/tests/attachments/ticket.pdf"), "rb")  as pdf_file:
             pdf_data = base64.b64encode(pdf_file.read())
 
-        with open(os.path.join(base_dir, "api/test/attachments/qr.png"), "rb") as qr_file:
+        with open(os.path.join(base_dir, "api/tests/attachments/qr.png"), "rb") as qr_file:
             image_data = base64.b64encode(qr_file.read())
 
         data = {
             'payload': {
-                'title': 'this is the title',
-                'h1_title': 'this is the subtitle',
-                'content': 'this is the content',
-                'footer': 'this is the footer',
+                'summit_name': 'Test Summit',
+                'order_owner_full_name': 'Sebastian Marcet',
+                'edit_ticket_link': 'https://registration.test,com',
+                'order_number': 'ORDER_NBR_1',
+                'owner_email': 'smarcet@gmail.com',
+                'owner_full_name': 'Sebastian Marcet',
+                'promo_code': '',
+                'ticket_type_name': 'FULL PASS',
+                'ticket_currency_symbol': '$',
+                'ticket_amount': '1000.00',
+                'ticket_currency': 'USD',
+                'ticket_number':'TICKET_NBR_1',
+                'support_email': 'support@test.com',
+                'manage_orders_url': 'https://registration.test.com/orders',
                 'attachments': [
-                    {'name': 'qr.png', 'content':  image_data, 'type': 'application/octet-stream', 'disposition': 'inline',  'content_id': 'qrcid'},
-                    {'name': 'ticket.pdf','content':  pdf_data, 'type': 'application/pdf', 'disposition': 'attachment',}
+                    {'name': 'qr.png', 'content': image_data, 'type': 'application/octet-stream',
+                     'disposition': 'inline', 'content_id': 'qrcid'},
+                    {'name': 'ticket.pdf', 'content': pdf_data, 'type': 'application/pdf',
+                     'disposition': 'attachment', }
                 ]
             },
             'to_email': 'smarcet@gmail.com,sebastian@tipit.net',

@@ -11,10 +11,6 @@ admin.site.site_header = _('Mailing API Admin')
 
 
 class MailTemplateForm(forms.ModelForm):
-    html_content = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={'class': 'ckeditor'})
-    )
 
     locale = forms.ChoiceField(
         required=False,

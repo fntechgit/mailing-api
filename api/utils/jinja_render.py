@@ -59,9 +59,8 @@ class JinjaRender(Render):
 
         return t.render(**data)
 
-    def render_subject(self, mail_template: MailTemplate, data: dict) -> str:
+    def render_subject(self, subject_content: str, data: dict) -> str:
         try:
-            subject_content = mail_template.subject
             if not is_empty(subject_content):
                 return self._render_content(subject_content, '', data, False)
             return subject_content

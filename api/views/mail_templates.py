@@ -179,7 +179,7 @@ class RenderMailTemplateAPIView(GenericAPIView):
             plain, html = render.render(instance, payload, True)
             subject = ''
             if not is_empty(instance.subject):
-                subject = render.render_subject(instance, payload)
+                subject = render.render_subject(instance.subject, payload)
 
             return Response({'plain_content': plain, 'html_content': html, 'subject': subject}, status=status.HTTP_200_OK)
         except ValidationError as e:

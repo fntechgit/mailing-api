@@ -30,7 +30,7 @@ class TestRender(TestCase):
         self.assertIn("Price: $1000.00 USD", html)
         self.assertIn("Additional Information Required to Issue Ticket", html)
 
-        subject = render.render_subject(template, payload)
+        subject = render.render_subject(template.subject, payload)
 
         self.assertIn("[Test Summit] You have been registered for Test Summit", subject)
 
@@ -69,7 +69,7 @@ class TestRender(TestCase):
         self.assertIn("Price: $1000.00 USD", html)
         self.assertIn("Additional Information Required to Issue Ticket", html)
 
-        subject = render.render_subject(template, payload)
+        subject = render.render_subject(template.subject, payload)
 
         self.assertIn("[Test Summit] Order Confirmation for Test Summit", subject)
 
@@ -80,7 +80,7 @@ class TestRender(TestCase):
         render = JinjaRender()
         payload = {
             'summit_name': 'Test Summit',
-            'edit_ticket_link': 'https://registration.test,com',
+                'edit_ticket_link': 'https://registration.test,com',
             'order_number': 'ORDER_NBR_1',
             'owner_email': 'smarcet@gmail.com',
             'owner_full_name': 'Sebastian Marcet',
@@ -109,6 +109,6 @@ class TestRender(TestCase):
         self.assertIn("Attendee: UNASSIGNED", html)
         self.assertIn("PROMO_1", html)
 
-        subject = render.render_subject(template, payload)
+        subject = render.render_subject(template.subject, payload)
 
         self.assertIn("[Test Summit] Order Confirmation for Test Summit", subject)

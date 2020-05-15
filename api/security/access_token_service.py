@@ -30,7 +30,7 @@ class AccessTokenService(AbstractAccessTokenService):
                     ),
                     auth=(config('OAUTH2.CLIENT.ID', None), config('OAUTH2.CLIENT.SECRET', None),),
                     params={'token': access_token},
-                    verify=config('DEBUG', False)
+                    verify=False if config('DEBUG', False) else True
                 )
 
                 if response.status_code == requests.codes.ok:

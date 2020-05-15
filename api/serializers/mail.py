@@ -21,8 +21,11 @@ class MailReadSerializer(serializers.ModelSerializer):
 
 class MailWriteSerializer(serializers.ModelSerializer):
 
-    template = serializers.PrimaryKeyRelatedField(many=False, queryset=MailTemplate.objects.all(), required=True,
-                                                  allow_null=False)
+    template = serializers.SlugRelatedField(many=False,
+                                            queryset=MailTemplate.objects.all(),
+                                            required=True,
+                                            slug_field='identifier',
+                                            allow_null=False)
     payload = serializers.JSONField()
     subject = serializers.CharField(required=False)
     created = TimestampField(read_only=True)
@@ -97,6 +100,7 @@ class MailWriteSerializer(serializers.ModelSerializer):
         if is_empty(instance.plain_content) and is_empty(instance.html_content):
             raise ValidationError(_("content is mandatory (HTML/PLAIN)."))
 
+        instance.subject = render.render_subject(instance.subject, payload)
         instance.save()
 
         logging.getLogger('serializers').debug('MailWriteSerializer.create plain_content {plain_content} html_content '
