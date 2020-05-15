@@ -16,20 +16,24 @@ class JinjaRender(Render):
         self.env = None
 
     def validate(self, templates) -> str:
-        self.env = Environment(loader=DictLoader(templates))
-        # validate source
-        # If you have incorrect syntax, you will get a TemplateSyntaxError
-        template_source,_,_ = self.env.loader.get_source(self.env, JinjaRender.INDEX_FILE)
-        template_source = template_source.replace("\\'", "'")
-        parsed_content = self.env.parse(template_source)
+        try:
+            self.env = Environment(loader=DictLoader(templates))
+            # validate source
+            # If you have incorrect syntax, you will get a TemplateSyntaxError
+            template_source,_,_ = self.env.loader.get_source(self.env, JinjaRender.INDEX_FILE)
+            template_source = template_source.replace("\\'", "'")
+            parsed_content = self.env.parse(template_source)
 
-        if JinjaRender.LAYOUT_FILE in templates:
-            ref_templates = list(meta.find_referenced_templates(parsed_content))
-            if JinjaRender.LAYOUT_FILE not in ref_templates:
-                raise ValidationError(_("You need to define a {%- extends 'layout' %} block on your child template in "
-                                        "order to use template inheritance."))
+            if JinjaRender.LAYOUT_FILE in templates:
+                ref_templates = list(meta.find_referenced_templates(parsed_content))
+                if JinjaRender.LAYOUT_FILE not in ref_templates:
+                    raise ValidationError(_("You need to define a {%- extends 'layout' %} block on your child template in "
+                                            "order to use template inheritance."))
 
-        return parsed_content
+            return parsed_content
+        except TemplateSyntaxError as e:
+            logging.getLogger('api').warning(e)
+            raise ValidationError(_("Invalid template syntax."))
 
     @staticmethod
     def build_dic(content:str, parent_content:str) -> dict:
