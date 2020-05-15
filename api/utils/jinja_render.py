@@ -8,7 +8,6 @@ from api.utils.empty_str import is_empty
 
 
 class JinjaRender(Render):
-
     INDEX_FILE = 'index'
     LAYOUT_FILE = 'layout'
 
@@ -16,27 +15,28 @@ class JinjaRender(Render):
         self.env = None
 
     def validate(self, templates) -> str:
+        parsed_content = None
         try:
             self.env = Environment(loader=DictLoader(templates))
             # validate source
             # If you have incorrect syntax, you will get a TemplateSyntaxError
-            template_source,_,_ = self.env.loader.get_source(self.env, JinjaRender.INDEX_FILE)
+            template_source, a, b = self.env.loader.get_source(self.env, JinjaRender.INDEX_FILE)
             template_source = template_source.replace("\\'", "'")
             parsed_content = self.env.parse(template_source)
 
             if JinjaRender.LAYOUT_FILE in templates:
                 ref_templates = list(meta.find_referenced_templates(parsed_content))
                 if JinjaRender.LAYOUT_FILE not in ref_templates:
-                    raise ValidationError(_("You need to define a {%- extends 'layout' %} block on your child template in "
+                    raise ValidationError(_("You need to define a {%- extends 'layout' %} block on your child "
+                                            "template in "
                                             "order to use template inheritance."))
-
-            return parsed_content
         except TemplateSyntaxError as e:
             logging.getLogger('api').warning(e)
             raise ValidationError(_("Invalid template syntax."))
+        return parsed_content
 
     @staticmethod
-    def build_dic(content:str, parent_content:str) -> dict:
+    def build_dic(content: str, parent_content: str) -> dict:
         templates = {
             JinjaRender.INDEX_FILE: content,
         }
@@ -45,7 +45,7 @@ class JinjaRender(Render):
 
         return templates
 
-    def _render_content(self, content:str, parent_content:str, data: dict, validate_data: bool):
+    def _render_content(self, content: str, parent_content: str, data: dict, validate_data: bool):
 
         parsed_content = self.validate(JinjaRender.build_dic(content, parent_content))
         t = self.env.get_template(JinjaRender.INDEX_FILE)
@@ -102,6 +102,3 @@ class JinjaRender(Render):
         except TemplateSyntaxError as e:
             logging.getLogger('api').warning(e)
             raise ValidationError(_("Invalid template syntax."))
-
-
-
