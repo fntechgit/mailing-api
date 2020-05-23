@@ -12,11 +12,6 @@ admin.site.site_header = _('Mailing API Admin')
 
 class MailTemplateForm(forms.ModelForm):
 
-    locale = forms.ChoiceField(
-        required=False,
-        choices=list(config('SUPPORTED_LOCALES').items())
-    )
-
     class Meta:
         model = MailTemplate
         fields = '__all__'
@@ -34,7 +29,7 @@ class MailTemplateForm(forms.ModelForm):
 class MailTemplateAdmin(admin.ModelAdmin):
     form = MailTemplateForm
     filter_horizontal = ['allowed_clients']
-
+    list_display = ('id', 'identifier')
     my_id_for_formfield = None
 
     def get_form(self, request, obj=None, change=False, **kwargs):

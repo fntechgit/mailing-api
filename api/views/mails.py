@@ -82,12 +82,13 @@ class MailListCreateAPIView(ListCreateAPIView):
 
     @oauth2_scope_required()
     def get(self, request, *args, **kwargs):
+        logging.getLogger('api').debug('calling MailListCreateAPIView::get')
         return self.list(request, *args, **kwargs)
 
     @oauth2_scope_required()
     def post(self, request, *args, **kwargs):
         try:
-            logging.getLogger('api').debug('calling MailTemplateCreateAPIView::post')
+            logging.getLogger('api').debug('calling MailListCreateAPIView::post')
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             instance = serializer.save()

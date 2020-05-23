@@ -30,7 +30,6 @@ class TestSerializers(TestCase):
 
         data = {
             'identifier' : 'identifier_1',
-            'locale' : 'es',
             'html_content' : html_content,
             'from_email' : 'test@test.com',
             'subject': 'test subject',
@@ -44,6 +43,5 @@ class TestSerializers(TestCase):
 
         self.assertTrue(template is not None)
         self.assertEqual(template.identifier, 'identifier_1')
-        self.assertEqual(template.locale, 'es')
         self.assertEqual(template.subject, 'test subject')
         self.assertEqual(template.from_email, 'test@test.com')

@@ -71,7 +71,7 @@ class EmailSendingTests(APITestCase):
                 ]
             },
             'to_email': 'smarcet@gmail.com,sebastian@tipit.net',
-            'template': self.child.id,
+            'template': self.child.identifier,
         }
 
         response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token),

@@ -1,5 +1,5 @@
 import logging
-import sys, traceback
+import traceback
 
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import status
@@ -67,7 +67,6 @@ class MailTemplateFilter(FilterSet):
             'subject': ['contains'],
             'identifier': ['contains'],
             'is_active': ['exact'],
-            'locale': ['exact'],
             'from_email': ['contains'],
         }
 
@@ -77,7 +76,7 @@ class MailTemplateListCreateAPIView(ListCreateAPIView):
     filterset_class = MailTemplateFilter
     schema = CustomClientSchema()
     # ordering
-    ordering_fields = ['id', 'created', 'updated', 'subject', 'identifier', 'is_active', 'max_retries', 'locale']
+    ordering_fields = ['id', 'created', 'updated', 'subject', 'identifier', 'is_active', 'max_retries']
     ordering = ['id']
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)
@@ -146,6 +145,14 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling MailTemplateRetrieveUpdateDestroyAPIView::destroy')
+            template = self.get_object()
+
+            if not template:
+                raise EntityNotFound()
+
+            if template.is_system:
+                raise ValidationError("Can not delete a system template.")
+
             return self.destroy(request, *args, **kwargs)
         except ValidationError as e:
             logging.getLogger('api').warning(e)
@@ -244,7 +251,7 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
 
             if not template.is_allowed_client(client_id):
                 raise ValidationError(
-                    'client {client_id} does not belong to allowed clients for template {pk}'.format(pk=pk, client_id=client_id))
+                    'client {client_id} does not belong to allowed clients for template {pk}.'.format(pk=pk, client_id=client_id))
 
             template.allowed_clients.remove(client)
 

@@ -78,7 +78,6 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
     def validate(self, data):
         from_email = data['from_email'] if 'from_email' in data else None
         identifier = data['identifier'] if 'identifier' in data else None
-        locale = data['locale'] if 'locale' in data else None
         parent = data['parent'] if 'parent' in data else None
         html_content = data['html_content'] if 'html_content' in data else None
         plain_content = data['plain_content'] if 'plain_content' in data else None
@@ -93,9 +92,6 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
             parent_content = parent.html_content if parent else None
             render.validate(JinjaRender.build_dic(html_content, parent_content))
 
-        if not is_empty(locale) and locale not in config('SUPPORTED_LOCALES'):
-            raise ValidationError(_('locale {locale} not supported.'.format(locale=locale)))
-
         is_update = self.instance is not None
         # validate parent ( parent should be a root , that is parent.parent_id = 0 )
         if parent and parent.has_parent :
@@ -108,12 +104,12 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
             raise ValidationError(_("identifier is mandatory."))
 
         # enforce unique IDX
-        query = MailTemplate.objects.filter(identifier=identifier).filter(locale=locale)
+        query = MailTemplate.objects.filter(identifier=identifier)
         if is_update:
             query = query.filter(~Q(pk=self.instance.id))
 
         if query.count() > 0:
-            raise ValidationError(_('Already exist an Email Template identifer/locale combination.'))
+            raise ValidationError(_('Already exist an Email Template for that identifier.'))
 
         return data
 

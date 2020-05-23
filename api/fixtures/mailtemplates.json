@@ -3,16 +3,16 @@
     "model": "api.mailtemplate",
     "pk": 1,
     "fields": {
-        "created": "2020-05-14T12:40:51Z",
-        "modified": "2020-05-15T04:01:32.777Z",
+        "created": "2020-05-23T18:52:44Z",
+        "modified": "2020-05-23T18:52:44Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_INVITE_ATTENDEE_TICKET_EDITION",
         "subject": "[{{summit_name}}] You have been registered for {{summit_name}}",
         "plain_content": "",
-        "html_content": "<p>Congratulations {{ order_owner_full_name }} has purchased the below ticket(s) for you to attend {{ summit_name }}. In order to claim your ticket, you must <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">fill in the required details</a>. Your registration information is below:</p>\r\n\r\n<p><strong>{{ ticket_number }}</strong></p>\r\n\r\n<ul>\r\n\t<li>Type: {{ ticket_type_name }}</li>\r\n\t<li>Attendee: {{ owner_email }}</li>\r\n\t<li>Promo Code: {% if promo_code is defined and promo_code|length %} ({{ promo_code }}) {% else %} None {% endif %}</li>\r\n\t<li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\r\n\t<li>{% if need_details is defined and need_details is sameas true %}</li>\r\n\t<li>Additional Information Required to Issue Ticket</li>\r\n\t<li>{% endif %}</li>\r\n</ul>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p><strong>Your ticket *HAS NOT* been issued yet. You must claim your ticket by <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">filling in the required details</a> before your ticket can be issued. Please click the button below to enter your details: </strong></p>\r\n\r\n<p>Accept your ticket to {{ summit_name }}</p>\r\n\r\n<p>We look forward to issuing your ticket and seeing you at {{ summit_name }} If you have any questions please contact the {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.</p>\r\n\r\n<p>Thank you!<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        .order_list {\n            list-style-type: none;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        .manage-btn{\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\n            box-sizing: border-box;\n            margin: 0;\n            font: inherit;\n            overflow: visible;\n            text-transform: none;\n            -webkit-appearance: button;\n            font-family: inherit;\n            display: inline-block;\n            padding: 6px 12px;\n            margin-bottom: 0;\n            font-size: 14px;\n            font-weight: 400;\n            line-height: 1.42857143;\n            text-align: center;\n            white-space: nowrap;\n            vertical-align: middle;\n            touch-action: manipulation;\n            cursor: pointer;\n            user-select: none;\n            background-image: none;\n            border-radius: 4px;\n            color: #fff;\n            background-color: #3fa2f7;\n            border: none;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Congratulations {{ order_owner_full_name }} has purchased the below ticket(s) for you to attend {{ summit_name }}.\n    In order to claim your ticket, you must <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">fill in the required details</a>. Your registration information is below:\n</p>\n<p>\n<b>{{ ticket_number }}</b>\n<ul>\n    <li>Type: {{ ticket_type_name }}</li>\n    <li>\n        Attendee: {{ owner_email }}\n    </li>\n    <li>\n        Promo Code:\n        {% if promo_code is defined and promo_code|length %}\n            ({{ promo_code }})\n        {% else %}\n            None\n       {% endif %}\n    </li>\n    <li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\n    {% if need_details is defined and need_details is sameas true %}\n        <li><span class=\"details_needed\">Additional Information Required to Issue Ticket</span></li>\n    {% endif %}\n</ul>\n</p>\n<p>\n    <b>\n        Your ticket *HAS NOT* been issued yet. You must claim your ticket by <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">filling in the required details</a>\n        before your ticket can be issued. Please click the button below to enter your details:\n    </b>\n</p>\n<p>\n    <a target=\"_blank\" href=\"{{ edit_ticket_link }}\"><button class=\"btn btn-primary manage-btn\">Accept your ticket to {{ summit_name }}</button></a>\n</p>\n<p>\n    We look forward to issuing your ticket and seeing you at {{ summit_name }} If you have any questions please contact the\n    {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -21,16 +21,16 @@
     "model": "api.mailtemplate",
     "pk": 2,
     "fields": {
-        "created": "2020-05-14T12:40:51Z",
-        "modified": "2020-05-15T04:01:40.617Z",
+        "created": "2020-05-23T18:52:44Z",
+        "modified": "2020-05-23T18:52:44Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_REGISTERED_MEMBER_ORDER_PAID",
         "subject": "[{{summit_name}}] Order Confirmation for {{summit_name}}",
         "plain_content": "",
-        "html_content": "<p>Hey {{ owner_full_name }} thank you for purchasing ticket(s) to attend <strong>{{ summit_name }}</strong>. This is your order confirmation and your order details are below:</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<ul>\r\n\t<li>Order Number: <strong>{{ order_number }}</strong></li>\r\n\t<li>Price: {{ order_currency_symbol }}{{ order_amount }} {{ order_currency }}</li>\r\n</ul>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>Tickets Included:</p>\r\n\r\n<ul>\r\n\t<li>{% for ticket in tickets %}</li>\r\n\t<li><strong>{{ ticket.number }}</strong>\r\n\t<ul>\r\n\t\t<li>Type: {{ ticket.ticket_type_name }}</li>\r\n\t\t<li>{% if ticket.has_owner is defined and ticket.has_owner is sameas true %} Attendee: {{ ticket.owner_email }} {% else %} Attendee: UNASSIGNED {% endif %}</li>\r\n\t\t<li>Promo Code: {% if ticket.promo_code is defined %} ({{ ticket.promo_code.code }}) {% else %} None {% endif %}</li>\r\n\t\t<li>Price: ticket.currency_symbol{{ ticket.price }} {{ ticket.currency}}</li>\r\n\t\t<li>{% if ticket.need_details is defined and ticket.need_details is sameas true %}</li>\r\n\t\t<li>Additional Information Required to Issue Ticket</li>\r\n\t\t<li>{% endif %}</li>\r\n\t</ul>\r\n\t</li>\r\n\t<li>{% endfor %}</li>\r\n</ul>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p><strong>PLEASE NOTE! Tickets must be assigned and all attendee details must be entered to issue the ticket. </strong></p>\r\n\r\n<p>If the ticket is already assigned the attendee will have received an email to enter attendee details.</p>\r\n\r\n<p>If the ticket has not been assigned then when assigned the attendee will receive an email to enter attendee details.</p>\r\n\r\n<p>If you prefer to add the required attendee information yourself, you may do so on the <a href=\"{{ manage_orders_url }}\" target=\"_blank\">manage orders</a> page.</p>\r\n\r\n<p><strong>Once all information is entered, the ticket will be issued and emailed to the assigned attendee. </strong></p>\r\n\r\n<p>Manage your Orders</p>\r\n\r\n<p>Thank you again for your purchase, we look forward to seeing your attendees at {{ summit_name }}. If you have any questions please contact the {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.</p>\r\n\r\n<p>Thank you!<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        .order_list {\n            list-style-type: none;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n        .manage-btn{\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\n            box-sizing: border-box;\n            margin: 0;\n            font: inherit;\n            overflow: visible;\n            text-transform: none;\n            -webkit-appearance: button;\n            font-family: inherit;\n            display: inline-block;\n            padding: 6px 12px;\n            margin-bottom: 0;\n            font-size: 14px;\n            font-weight: 400;\n            line-height: 1.42857143;\n            text-align: center;\n            white-space: nowrap;\n            vertical-align: middle;\n            touch-action: manipulation;\n            cursor: pointer;\n            user-select: none;\n            background-image: none;\n            border-radius: 4px;\n            color: #fff;\n            background-color: #3fa2f7;\n            border: none;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n    </style>\n</head>\n<body>\n<p>\n    Hey {{ owner_full_name }} thank you for purchasing ticket(s) to attend <b>{{ summit_name }}</b>.\n    This is your order confirmation and your order details are below:\n</p>\n<p>\n    <ul class=\"order_list\">\n        <li>\n            Order Number: <b>{{ order_number }}</b>\n        </li>\n        <li>\n            Price: {{ order_currency_symbol }}{{ order_amount }} {{ order_currency }}\n        </li>\n    </ul>\n</p>\n<p>\n    Tickets Included:\n    <ul>\n    {% for ticket in tickets %}\n        <li>\n            <b>{{ ticket.number }}</b>\n            <ul>\n                <li>Type: {{ ticket.ticket_type_name }}</li>\n                <li>\n                    {% if ticket.has_owner is defined and ticket.has_owner is sameas true %}\n                        Attendee: {{ ticket.owner_email }}\n                    {% else %}\n                        <span class=\"details_needed\">Attendee: UNASSIGNED</span>\n                    {% endif %}\n                </li>\n                <li>\n                    Promo Code:\n                    {% if ticket.promo_code is defined %}\n                        ({{ ticket.promo_code.code }})\n                    {% else %}\n                        None\n                    {% endif %}\n                </li>\n                <li>Price: {{ticket.currency_symbol}}{{ ticket.price }} {{ ticket.currency}}</li>\n                {% if ticket.need_details is defined and  ticket.need_details is sameas true %}\n                    <li><span class=\"details_needed\">Additional Information Required to Issue Ticket</span></li>\n                {% endif %}\n            </ul>\n        </li>\n    {% endfor %}\n    </ul>\n</p>\n<p>\n    <b>\n        PLEASE NOTE! Tickets must be assigned and all attendee details must be entered to issue the ticket.\n    </b>\n</p>\n<p>\n    If the ticket is already assigned the attendee will have received an email to enter attendee details.\n</p>\n<p>\n    If the ticket has not been assigned then when assigned the attendee will receive an email to enter attendee details.\n</p>\n<p>\n    If you prefer to add the required attendee information yourself, you may do so on the <a target=\"_blank\" href=\"{{ manage_orders_url }}\">manage orders</a> page.\n</p>\n<p>\n    <b>\n        Once all information is entered, the ticket will be issued and emailed to the assigned attendee.\n    </b>\n</p>\n<p>\n    <a target=\"_blank\" href=\"{{ manage_orders_url }}\"><button class=\"btn btn-primary manage-btn\">Manage your Orders</button></a>\n</p>\n<p>\nThank you again for your purchase, we look forward to seeing your attendees at {{ summit_name }}. If you have any questions\nplease contact the {{ summit_name }} support team at <a target=\"_blank\" href=\"mailto:{{ support_email }}\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -39,16 +39,16 @@
     "model": "api.mailtemplate",
     "pk": 3,
     "fields": {
-        "created": "2020-05-14T12:40:51Z",
-        "modified": "2020-05-15T04:01:25.044Z",
+        "created": "2020-05-23T18:52:44Z",
+        "modified": "2020-05-23T18:52:44Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_REVOCATION_TICKET",
         "subject": "[{{summit_name}}] Your registration for {{summit_name}} has been cancelled",
         "plain_content": "",
-        "html_content": "<p>Hey {{ owner_full_name }}, your registration for <strong>{{ summit_name }}</strong> has been cancelled or reassigned. You are no longer registered to attend this event. We hope to see you at a future event. If you believe this was a mistake please contact <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.</p>\r\n\r\n<p>Thank you!<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Hey {{ owner_full_name }}, your registration for <b>{{ summit_name }}</b> has been cancelled or reassigned. You are no longer\n    registered to attend this event. We hope to see you at a future event. If you believe this was a mistake please\n    contact <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -57,16 +57,16 @@
     "model": "api.mailtemplate",
     "pk": 4,
     "fields": {
-        "created": "2020-05-14T12:40:51Z",
-        "modified": "2020-05-15T04:01:52.191Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_ATTENDEE_TICKET",
         "subject": "[{{summit_name}}] Your Ticket for {{summit_name}}",
         "plain_content": "",
-        "html_content": "<p>Hey, {{ owner_full_name }} you&rsquo;ve done it! Thank you for completing the details required to issue your ticket to: {{ summit_name }}.</p>\r\n\r\n<p>Your ticket is attached to this email and displayed below. You will be able to scan the QR code in this email or from a print out of the attached ticket when you check in at the event.</p>\r\n\r\n<p>For reference Your ticket:</p>\r\n\r\n<p><img src=\"cid:qrcid\" /> <strong>{{ ticket_number }}</strong></p>\r\n\r\n<ul>\r\n\t<li>Type: {{ ticket_type_name }}</li>\r\n\t<li>Attendee: {{ owner_email }}</li>\r\n\t<li>Promo Code: {% if promo_code is defined and promo_code|length %} ({{ promo_code }}) {% else %} None {% endif %}</li>\r\n\t<li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\r\n</ul>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>We look forward to seeing you at {{ summit_name }}. If you have any questions please contact the {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.</p>\r\n\r\n<p>Thank you!<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        .qr_image{\n            height: 250px;\n            width: 250px;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Hey, {{ owner_full_name }} you\u2019ve done it! Thank you for completing the details required to issue your\n    ticket to: {{ summit_name }}.\n</p>\n<p>\n    Your ticket is attached to this email and displayed below. You will be able to scan the QR code in this email or\n    from a print out of the attached ticket when you check in at the event.\n</p>\n<p>\n    For reference Your ticket:\n</p>\n<p>\n    <img class=\"qr_image\" src=\"cid:qrcid\">\n    <b>{{ ticket_number }}</b>\n<ul>\n    <li>Type: {{ ticket_type_name }}</li>\n    <li>\n        Attendee: {{ owner_email }}\n    </li>\n    <li>\n        Promo Code:\n       {% if promo_code is defined and promo_code|length %}\n            ({{ promo_code }})\n        {% else %}\n            None\n       {% endif %}\n    </li>\n    <li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\n</ul>\n</p>\n<p>\n    We look forward to seeing you at {{ summit_name }}. If you have any questions please contact the\n    {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -75,16 +75,16 @@
     "model": "api.mailtemplate",
     "pk": 5,
     "fields": {
-        "created": "2020-05-14T12:40:51Z",
-        "modified": "2020-05-15T04:01:08.669Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_REGENERATION_INVITE_ATTENDEE_TICKET_EDITION",
         "subject": "[{{summit_name}}] You have been registered for {{summit_name}} [resending]",
         "plain_content": "",
-        "html_content": "<p>Congratulations {{ order_owner_full_name }} has purchased the below ticket(s) for you to attend {{ summit_name }}. In order to claim your ticket, you must <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">fill in the required details</a>. Your registration information is below:</p>\r\n\r\n<p><strong>{{ ticket_number }}</strong></p>\r\n\r\n<ul>\r\n\t<li>Type: {{ ticket_type_name }}</li>\r\n\t<li>Attendee: {{ owner_email }}</li>\r\n\t<li>Promo Code: {% if promo_code is defined and promo_code|length %} ({{ promo_code }}) {% else %} None {% endif %}</li>\r\n\t<li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\r\n\t<li>{% if need_details is defined and need_details is sameas true %}</li>\r\n\t<li>Additional Information Required to Issue Ticket</li>\r\n\t<li>{% endif %}</li>\r\n</ul>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p><strong>Your ticket *HAS NOT* been issued yet. You must claim your ticket by <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">filling in the required details</a> before your ticket can be issued. Please click the button below to enter your details: </strong></p>\r\n\r\n<p>Accept your ticket to {{ summit_name }}</p>\r\n\r\n<p>We look forward to issuing your ticket and seeing you at {{ summit_name }}. If you have any questions please contact the {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.</p>\r\n\r\n<p>Thank you!<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        .order_list {\n            list-style-type: none;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        .manage-btn{\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\n            box-sizing: border-box;\n            margin: 0;\n            font: inherit;\n            overflow: visible;\n            text-transform: none;\n            -webkit-appearance: button;\n            font-family: inherit;\n            display: inline-block;\n            padding: 6px 12px;\n            margin-bottom: 0;\n            font-size: 14px;\n            font-weight: 400;\n            line-height: 1.42857143;\n            text-align: center;\n            white-space: nowrap;\n            vertical-align: middle;\n            touch-action: manipulation;\n            cursor: pointer;\n            user-select: none;\n            background-image: none;\n            border-radius: 4px;\n            color: #fff;\n            background-color: #3fa2f7;\n            border: none;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Congratulations {{ order_owner_full_name }} has purchased the below ticket(s) for you to attend {{ summit_name }}.\n    In order to claim your ticket, you must <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">fill in the required details</a>. Your registration information is below:\n</p>\n<p>\n<b>{{ ticket_number }}</b>\n<ul>\n    <li>Type: {{ ticket_type_name }}</li>\n    <li>\n        Attendee: {{ owner_email }}\n    </li>\n    <li>\n        Promo Code:\n        {% if promo_code is defined and promo_code|length %}\n            ({{ promo_code }})\n        {% else %}\n            None\n       {% endif %}\n    </li>\n    <li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\n    {% if need_details is defined and need_details is sameas true %}\n        <li><span class=\"details_needed\">Additional Information Required to Issue Ticket</span></li>\n    {% endif %}\n</ul>\n</p>\n<p>\n    <b>\n        Your ticket *HAS NOT* been issued yet. You must claim your ticket by <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">filling in the required details</a>\n        before your ticket can be issued. Please click the button below to enter your details:\n    </b>\n</p>\n<p>\n    <a target=\"_blank\" href=\"{{ edit_ticket_link }}\"><button class=\"btn btn-primary manage-btn\">Accept your ticket to {{ summit_name }}</button></a>\n</p>\n<p>\n    We look forward to issuing your ticket and seeing you at {{ summit_name }}. If you have any questions please contact the\n    {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -93,16 +93,16 @@
     "model": "api.mailtemplate",
     "pk": 6,
     "fields": {
-        "created": "2020-05-14T12:40:52Z",
-        "modified": "2020-05-15T04:01:02.086Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_ORDER_CANCELLED",
         "subject": "[{{summit_name}}] Order Cancelled",
         "plain_content": "",
-        "html_content": "<p>Hi {{ owner_full_name }}, your order {{ order_number }} for {{ summit_name }}</p>\r\n\r\n<p>got canceled because you did not take any action to pay it.</p>\r\n\r\n<p>Cheers,<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n    </style>\n</head>\n<body>\n<p>\n    Hi {{ owner_full_name }}, your order {{ order_number }} for {{ summit_name }}\n</p>\n<p>\n    got canceled because you did not take any action to pay it.\n</p>\n<p>Cheers,<br/>{{ summit_name }} Support Team</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -111,16 +111,16 @@
     "model": "api.mailtemplate",
     "pk": 7,
     "fields": {
-        "created": "2020-05-14T12:40:52Z",
-        "modified": "2020-05-15T04:28:03.260Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_UNREGISTERED_MEMBER_ORDER_PAID",
         "subject": "[{{summit_name}}] Order Confirmation for {{summit_name}}",
         "plain_content": "",
-        "html_content": "<!DOCTYPE html>\r\n<html lang=\"en-US\">\r\n<head>\r\n    <meta charset=\"utf-8\">\r\n    <style>\r\n\r\n        .order_list {\r\n            list-style-type: none;\r\n        }\r\n\r\n        a {\r\n            color: #337ab7;\r\n            text-decoration: none;\r\n        }\r\n\r\n        p {\r\n            line-height: 24px;\r\n            margin-bottom: 30px;\r\n        }\r\n\r\n        .manage-btn{\r\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\r\n            box-sizing: border-box;\r\n            margin: 0;\r\n            font: inherit;\r\n            overflow: visible;\r\n            text-transform: none;\r\n            -webkit-appearance: button;\r\n            font-family: inherit;\r\n            display: inline-block;\r\n            padding: 6px 12px;\r\n            margin-bottom: 0;\r\n            font-size: 14px;\r\n            font-weight: 400;\r\n            line-height: 1.42857143;\r\n            text-align: center;\r\n            white-space: nowrap;\r\n            vertical-align: middle;\r\n            touch-action: manipulation;\r\n            cursor: pointer;\r\n            user-select: none;\r\n            background-image: none;\r\n            border-radius: 4px;\r\n            color: #fff;\r\n            background-color: #3fa2f7;\r\n            border: none;\r\n        }\r\n\r\n        .details_needed {\r\n            font-weight: bold;\r\n            color: rgb(204, 153, 51);\r\n        }\r\n\r\n    </style>\r\n</head>\r\n<body>\r\n<p>\r\n    Hey {{ owner_full_name }} thank you for purchasing ticket(s) to attend <b>{{ summit_name }}</b>.\r\n</p>\r\n<p>\r\n    There is no account in our system associated with your email address. In order to manage your order (assign tickets,\r\n    edit attendee details, request a refund, etc.) you will need to <a target=\"_blank\" href=\"{{ set_password_link }}\" target=\"_top\">create an account</a>.  Simply click the button below\r\n    to create an account and manage this order:\r\n</p>\r\n<p>\r\n    <a href=\"{{ set_password_link }}\" target=\"_blank\"><button class=\"btn btn-primary manage-btn\">Create an Account</button></a>\r\n</p>\r\n<p>\r\n    This is your order confirmation and your order details are below:\r\n</p>\r\n<p>\r\n<ul class=\"order_list\">\r\n    <li>\r\n        Order Number: <b>{{ order_number }}</b>\r\n    </li>\r\n    <li>\r\n        Price: {{ order_currency_symbol }}{{ order_amount }} {{ order_currency }}\r\n    </li>\r\n</ul>\r\n</p>\r\n<p>\r\n    Tickets Included:\r\n    <ul>\r\n    {% for ticket in tickets %}\r\n        <li>\r\n            <b>{{ ticket.number }}</b>\r\n            <ul>\r\n                <li>Type: {{ ticket.ticket_type_name }}</li>\r\n                <li>\r\n                    {% if ticket.has_owner is defined and ticket.has_owner is sameas true %}\r\n                        Attendee: {{ ticket.owner_email }}\r\n                    {% else %}\r\n                        <span class=\"details_needed\">Attendee: UNASSIGNED</span>\r\n                    {% endif %}\r\n                </li>\r\n                <li>\r\n                    Promo Code:\r\n                    {% if ticket.promo_code is defined %}\r\n                        ({{ ticket.promo_code.code }})\r\n                    {% else %}\r\n                        None\r\n                    {% endif %}\r\n                </li>\r\n                <li>Price: ${{ ticket.price}} {{ ticket.currency }}</li>\r\n                {% if ticket.need_details is defined and ticket.need_details is sameas true %}\r\n                    <li><span class=\"details_needed\">Additional Information Required to Issue Ticket</span></li>\r\n                {% endif %}\r\n\r\n            </ul>\r\n        </li>\r\n   {% endfor %}\r\n   </ul>\r\n</p>\r\n<p>\r\n    <b>\r\n        PLEASE NOTE! Tickets must be assigned and all attendee details must be entered to issue the ticket.\r\n    </b>\r\n</p>\r\n<p>\r\n    If the ticket is already assigned the attendee will have received an email to enter attendee details.\r\n</p>\r\n<p>\r\n    If the ticket has not been assigned then when assigned the attendee will receive an email to enter attendee details.\r\n</p>\r\n<p>\r\n    If you prefer to add the required attendee information yourself, you may do so on the <a target=\"_blank\" href=\"{{ manage_orders_url }}\">manage orders</a> page.\r\n</p>\r\n<p>\r\n    <b>\r\n        Once all information is entered, the ticket will be issued and emailed to the assigned attendee.\r\n    </b>\r\n</p>\r\n        <p>\r\n            <a href=\"{{ manage_orders_url }}\" target=\"_blank\"><button class=\"btn btn-primary manage-btn\">Manage your Orders</button></a>\r\n            (<a href=\"{{ manage_orders_url }}\" target=\"_blank\">requires an account</a>)\r\n        </p>\r\n        <p>\r\n            Thank you again for your purchase, we look forward to seeing your attendees at {{ summit_name }}. If you have any questions\r\n            please contact the {{ summit_name }} support team at <a target=\"_blank\" href=\"mailto:{{ support_email }}\">{{ support_email }}</a>.\r\n        </p>\r\n        <p>\r\n            Thank you! <br>\r\n            {{ summit_name }} Support Team\r\n        </p>\r\n</body>\r\n</html>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n\n        .order_list {\n            list-style-type: none;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n        .manage-btn{\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\n            box-sizing: border-box;\n            margin: 0;\n            font: inherit;\n            overflow: visible;\n            text-transform: none;\n            -webkit-appearance: button;\n            font-family: inherit;\n            display: inline-block;\n            padding: 6px 12px;\n            margin-bottom: 0;\n            font-size: 14px;\n            font-weight: 400;\n            line-height: 1.42857143;\n            text-align: center;\n            white-space: nowrap;\n            vertical-align: middle;\n            touch-action: manipulation;\n            cursor: pointer;\n            user-select: none;\n            background-image: none;\n            border-radius: 4px;\n            color: #fff;\n            background-color: #3fa2f7;\n            border: none;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Hey {{ owner_full_name }} thank you for purchasing ticket(s) to attend <b>{{ summit_name }}</b>.\n</p>\n<p>\n    There is no account in our system associated with your email address. In order to manage your order (assign tickets,\n    edit attendee details, request a refund, etc.) you will need to <a target=\"_blank\" href=\"{{ set_password_link }}\" target=\"_top\">create an account</a>.  Simply click the button below\n    to create an account and manage this order:\n</p>\n<p>\n    <a href=\"{{ set_password_link }}\" target=\"_blank\"><button class=\"btn btn-primary manage-btn\">Create an Account</button></a>\n</p>\n<p>\n    This is your order confirmation and your order details are below:\n</p>\n<p>\n<ul class=\"order_list\">\n    <li>\n        Order Number: <b>{{ order_number }}</b>\n    </li>\n    <li>\n        Price: {{ order_currency_symbol }}{{ order_amount }} {{ order_currency }}\n    </li>\n</ul>\n</p>\n<p>\n    Tickets Included:\n    <ul>\n    {% for ticket in tickets %}\n        <li>\n            <b>{{ ticket.number }}</b>\n            <ul>\n                <li>Type: {{ ticket.ticket_type_name }}</li>\n                <li>\n                    {% if ticket.has_owner is defined and ticket.has_owner is sameas true %}\n                        Attendee: {{ ticket.owner_email }}\n                    {% else %}\n                        <span class=\"details_needed\">Attendee: UNASSIGNED</span>\n                    {% endif %}\n                </li>\n                <li>\n                    Promo Code:\n                    {% if ticket.promo_code is defined %}\n                        ({{ ticket.promo_code.code }})\n                    {% else %}\n                        None\n                    {% endif %}\n                </li>\n                <li>Price: {{ ticket.currency_symbol }{{ ticket.price}} {{ ticket.currency }}</li>\n                {% if ticket.need_details is defined and ticket.need_details is sameas true %}\n                    <li><span class=\"details_needed\">Additional Information Required to Issue Ticket</span></li>\n                {% endif %}\n\n            </ul>\n        </li>\n   {% endfor %}\n   </ul>\n</p>\n<p>\n    <b>\n        PLEASE NOTE! Tickets must be assigned and all attendee details must be entered to issue the ticket.\n    </b>\n</p>\n<p>\n    If the ticket is already assigned the attendee will have received an email to enter attendee details.\n</p>\n<p>\n    If the ticket has not been assigned then when assigned the attendee will receive an email to enter attendee details.\n</p>\n<p>\n    If you prefer to add the required attendee information yourself, you may do so on the <a target=\"_blank\" href=\"{{ manage_orders_url }}\">manage orders</a> page.\n</p>\n<p>\n    <b>\n        Once all information is entered, the ticket will be issued and emailed to the assigned attendee.\n    </b>\n</p>\n        <p>\n            <a href=\"{{ manage_orders_url }}\" target=\"_blank\"><button class=\"btn btn-primary manage-btn\">Manage your Orders</button></a>\n            (<a href=\"{{ manage_orders_url }}\" target=\"_blank\">requires an account</a>)\n        </p>\n        <p>\n            Thank you again for your purchase, we look forward to seeing your attendees at {{ summit_name }}. If you have any questions\n            please contact the {{ summit_name }} support team at <a target=\"_blank\" href=\"mailto:{{ support_email }}\">{{ support_email }}</a>.\n        </p>\n        <p>\n            Thank you! <br>\n            {{ summit_name }} Support Team\n        </p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -129,16 +129,16 @@
     "model": "api.mailtemplate",
     "pk": 8,
     "fields": {
-        "created": "2020-05-14T12:40:52Z",
-        "modified": "2020-05-15T04:00:42.782Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_ORDER_REMINDER_EMAIL",
         "subject": "[{{summit_name}}] Attention! Some attendees to {{summit_name}} in your order still need to accept their ticket",
         "plain_content": "",
-        "html_content": "<p>Hey {{ owner_full_name }} some attendees in your order have either not accepted their ticket to {{ summit_name }} because we still need additional details or you have not assigned the ticket. Please ask the attendee to fill in the necessary details, do it for them on the <a href=\"{{ manage_orders_url }}\" target=\"_blank\">manage orders</a> page, or assign the ticket to an attendee.</p>\r\n\r\n<p>Manage your Orders</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<ul>\r\n\t<li>{% for ticket in tickets %}</li>\r\n\t<li><strong>{{ ticket.number }}</strong>\r\n\t<ul>\r\n\t\t<li>Type: {{ ticket.ticket_type_name }}</li>\r\n\t\t<li>{% if ticket.has_owner is defined and ticket.has_owner is sameas true %} Attendee: {{ ticket.owner_email }} {% else %} Attendee: UNASSIGNED {% endif %}</li>\r\n\t\t<li>Promo Code: {% if ticket.promo_code is defined %} ({{ ticket.promo_code.code }}) {% else %} None {% endif %}</li>\r\n\t\t<li>Price: ${{ ticket.price}} {{ ticket.currency }}</li>\r\n\t\t<li>{% if ticket.need_details is defined and ticket.need_details is sameas true %}</li>\r\n\t\t<li>Additional Information Required to Issue Ticket</li>\r\n\t\t<li>{% endif %}</li>\r\n\t</ul>\r\n\t</li>\r\n\t<li>{% endfor %}</li>\r\n</ul>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>Thank you, we look forward to seeing you all the attendees at {{ summit_name }}. If you have any questions please contact the {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.</p>\r\n\r\n<p>Thank you!<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n\n        .manage-btn{\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\n            box-sizing: border-box;\n            margin: 0;\n            font: inherit;\n            overflow: visible;\n            text-transform: none;\n            -webkit-appearance: button;\n            font-family: inherit;\n            display: inline-block;\n            padding: 6px 12px;\n            margin-bottom: 0;\n            font-size: 14px;\n            font-weight: 400;\n            line-height: 1.42857143;\n            text-align: center;\n            white-space: nowrap;\n            vertical-align: middle;\n            touch-action: manipulation;\n            cursor: pointer;\n            user-select: none;\n            background-image: none;\n            border-radius: 4px;\n            color: #fff;\n            background-color: #3fa2f7;\n            border: none;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Hey {{ owner_full_name }} some attendees in your order have either not accepted their ticket to {{ summit_name }} because we\n    still need additional details or you have not assigned the ticket. Please ask the attendee to fill in the necessary details,\n    do it for them on the <a target=\"_blank\" href=\"{{ manage_orders_url }}\">manage orders</a> page, or assign the ticket to an attendee.\n</p>\n<p>\n    <a target=\"_blank\" href=\"{{ manage_orders_url }}\"><button class=\"btn btn-primary manage-btn\">Manage your Orders</button></a>\n</p>\n<p>\n<ul>\n    {% for ticket in tickets %}\n        <li>\n            <b>{{ ticket.number }}</b>\n            <ul>\n                <li>Type: {{ ticket.ticket_type_name }}</li>\n                <li>\n                    {% if ticket.has_owner is defined and ticket.has_owner is sameas true %}\n                        Attendee: {{ ticket.owner_email }}\n                    {% else %}\n                        <span class=\"details_needed\">Attendee: UNASSIGNED</span>\n                    {% endif %}\n                </li>\n                <li>\n                    Promo Code:\n                    {% if ticket.promo_code is defined %}\n                        ({{ ticket.promo_code.code }})\n                    {% else %}\n                        None\n                    {% endif %}\n                </li>\n                <li>Price: {{ ticket.currency_symbol }}{{ ticket.price}} {{ ticket.currency }}</li>\n                {% if ticket.need_details is defined and ticket.need_details is sameas true %}\n                    <li><span class=\"details_needed\">Additional Information Required to Issue Ticket</span></li>\n                {% endif %}\n\n            </ul>\n        </li>\n    {% endfor %}\n</ul>\n</p>\n<p>\n    Thank you, we look forward to seeing you all the attendees at {{ summit_name }}. If you have any questions please contact the {{ summit_name }}\n    support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -147,16 +147,16 @@
     "model": "api.mailtemplate",
     "pk": 9,
     "fields": {
-        "created": "2020-05-14T12:40:52Z",
-        "modified": "2020-05-15T04:00:35.870Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_TICKET_REMINDER_EMAIL",
         "subject": "[{{summit_name}}] Attention! You need to accept your ticket to {{summit_name}} by entering the required details",
         "plain_content": "",
-        "html_content": "<p>Hey {{ owner_full_name }} you still have not claimed your ticket to {{ summit_name }} because we still need you to enter additional details. Please <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">click here</a> to enter your details and claim your ticket.</p>\r\n\r\n<p>Accept your ticket to {{ summit_name }}</p>\r\n\r\n<p>Thank you, we look forward to seeing you at {{ summit_name }}. If you have any questions please contact the {{ summit_name }} support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.</p>\r\n\r\n<p>Thank you!<br />\r\n{{ summit_name }} Support Team</p>",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n        .manage-btn{\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\n            box-sizing: border-box;\n            margin: 0;\n            font: inherit;\n            overflow: visible;\n            text-transform: none;\n            -webkit-appearance: button;\n            font-family: inherit;\n            display: inline-block;\n            padding: 6px 12px;\n            margin-bottom: 0;\n            font-size: 14px;\n            font-weight: 400;\n            line-height: 1.42857143;\n            text-align: center;\n            white-space: nowrap;\n            vertical-align: middle;\n            touch-action: manipulation;\n            cursor: pointer;\n            user-select: none;\n            background-image: none;\n            border-radius: 4px;\n            color: #fff;\n            background-color: #3fa2f7;\n            border: none;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Hey {{ owner_full_name }} you still have not claimed your ticket to {{ summit_name }} because we still need you to enter additional\n    details. Please <a href=\"{{ edit_ticket_link }}\" target=\"_blank\">click here</a> to enter your details and claim your ticket.\n</p>\n<p>\n    <a target=\"_blank\" href=\"{{ edit_ticket_link }}\"><button class=\"btn btn-primary manage-btn\">Accept your ticket to {{ summit_name }}</button></a>\n</p>\n<p>\n    Thank you, we look forward to seeing you at {{ summit_name }}. If you have any questions please contact the {{ summit_name }}\n    support team at <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -165,8 +165,8 @@
     "model": "api.mailtemplate",
     "pk": 10,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_ORDER_REFUND_ACCEPTED",
         "subject": "[{{summit_name}}] Your order refund request for {{summit_name}} has been accepted",
@@ -174,7 +174,7 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        .order_list {\n            list-style-type: none;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        .manage-btn{\n            -webkit-tap-highlight-color: rgba(0,0,0,0);\n            box-sizing: border-box;\n            margin: 0;\n            font: inherit;\n            overflow: visible;\n            text-transform: none;\n            -webkit-appearance: button;\n            font-family: inherit;\n            display: inline-block;\n            padding: 6px 12px;\n            margin-bottom: 0;\n            font-size: 14px;\n            font-weight: 400;\n            line-height: 1.42857143;\n            text-align: center;\n            white-space: nowrap;\n            vertical-align: middle;\n            touch-action: manipulation;\n            cursor: pointer;\n            user-select: none;\n            background-image: none;\n            border-radius: 4px;\n            color: #fff;\n            background-color: #3fa2f7;\n            border: none;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n\n    Hey {{ owner_full_name }}, your refund request for {{ summit_name }} has been accepted.\n    A refund was issued for the following order:\n</p>\n<p>\n<ul class=\"order_list\">\n    <li>\n        Order Number: <b>{{ order_number }}</b>\n    </li>\n    <li>\n        Price: {{ order_currency_symbol }}{{ order_amount }} {{ order_currency }}\n    </li>\n</ul>\n</p>\n<p>\n    Tickets Included:\n<ul>\n      {% for ticket in tickets %}\n        <li>\n            <b>{{ ticket.number }}</b>\n            <ul>\n                <li>Type: {{ ticket.ticket_type_name }}</li>\n                <li>\n                    {% if ticket.has_owner is defined and ticket.has_owner is sameas true %}\n                        Attendee: {{ ticket.owner_email }}\n                    {% else %}\n                        <span class=\"details_needed\">Attendee: UNASSIGNED</span>\n                    {% endif %}\n                </li>\n                <li>\n                    Promo Code:\n                    {% if ticket.promo_code is defined %}\n                        ({{ ticket.promo_code.code }})\n                    {% else %}\n                        None\n                    {% endif %}\n                </li>\n                <li>Price: {{ticket.currency_symbol}}{{ ticket.price }} {{ ticket.currency}}</li>\n            </ul>\n        </li>\n    {% endfor %}\n</ul>\n</p>\n<p>\n    You should see the refund process in the next 3 - 5 business days.  If you have any immediate questions or\n    concerns please feel free to contact <a target=\"_blank\" href=\"mailto:{{ support_email }}\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -183,8 +183,8 @@
     "model": "api.mailtemplate",
     "pk": 11,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "fntech@tipit.net",
         "identifier": "REGISTRATION_ORDER_REFUND_REQUESTED_ADMIN",
         "subject": "[{{summit_name}}] - Order Refund Requested",
@@ -192,7 +192,7 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Hi Admin, User {{ owner_full_name }, order {{ order_number }}} for {{ summit_name }}}\n</p>\n<p>\n    has issued a refund request.\n</p>\n<p>Cheers,<br/>{{ summit_name }} Support Team</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -201,8 +201,8 @@
     "model": "api.mailtemplate",
     "pk": 12,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_ORDER_REFUND_REQUESTED_OWNER",
         "subject": "[{{summit_name}}] Your order refund request for {{summit_name}} has been received",
@@ -210,7 +210,7 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        .order_list {\n            list-style-type: none;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n    </style>\n</head>\n<body>\n<p>\n\n    Hey {{ owner_first_name }}, your refund request for {{ summit_name }} has been received.\n    Your refund request was for the order:\n</p>\n<p>\n<ul class=\"order_list\">\n    <li>\n        Order Number: <b>{{ order_number }}</b>\n    </li>\n    <li>\n        Price: {{ order_currency_symbol }}{{ order_amount }} {{ order_currency }}\n    </li>\n</ul>\n</p>\n<p>\n    Tickets Included:\n<ul>\n     {% for ticket in tickets %}\n        <li>\n            <b>{{ ticket.number }}</b>\n            <ul>\n                <li>Type: {{ ticket.ticket_type_name }}</li>\n                <li>\n                    {% if ticket.has_owner is defined and ticket.has_owner is sameas true %}\n                        Attendee: {{ ticket.owner_email }}\n                    {% else %}\n                        <span class=\"details_needed\">Attendee: UNASSIGNED</span>\n                    {% endif %}\n                </li>\n                <li>\n                    Promo Code:\n                    {% if ticket.promo_code is defined %}\n                        ({{ ticket.promo_code.code }})\n                    {% else %}\n                        None\n                    {% endif %}\n                </li>\n                <li>Price: {{ticket.currency_symbol}}{{ ticket.price }} {{ ticket.currency}}</li>\n            </ul>\n        </li>\n    {% endfor %}\n</ul>\n</p>\n<p>\n    You will be notified shortly if your refund request is approved or not. If you have any immediate questions or\n    concerns please feel free to contact <a target=\"_blank\" href=\"mailto:{{ support_email }}\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -219,8 +219,8 @@
     "model": "api.mailtemplate",
     "pk": 13,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_TICKET_REFUND_ACCEPTED",
         "subject": "[{{summit_name}}] Your ticket refund request for {{summit_name}} has been accepted",
@@ -228,7 +228,7 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        .order_list {\n            list-style-type: none;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n\n    </style>\n</head>\n<body>\n<p>\n<p>\n    Hey {{ owner_full_name }}, your refund request for <b>{{ summit_name }}</b> has been accepted.\n</p>\n<p>\n    A refund has been issued for the following ticket:\n</p>\n<p>\n<b>{{ ticket_number }}</b>\n<ul>\n    <li>Type: {{ ticket_type_name }}</li>\n    <li>\n       {% if ticket_owner is defined and ticket_owner|length %}\n            ({{ ticket_owner }})\n       {% else %}\n            <span class=\"details_needed\">Attendee: UNASSIGNED</span>\n       {% endif %}\n    </li>\n    <li>\n        Promo Code:\n         {% if ticket_promo_code is defined and ticket_promo_code|length %}\n            ({{ ticket_promo_code }})\n        {% else %}\n            None\n       {% endif %}\n    </li>\n    <li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\n</ul>\n</p>\n<p>\n    You should see the refund process in the next 3 - 5 business days.  If you have any immediate questions or concerns\n    please feel free to contact <a target=\"_blank\" href=\"mailto:{{ support_email }}\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -237,8 +237,8 @@
     "model": "api.mailtemplate",
     "pk": 14,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "fntech@tipit.net",
         "identifier": "REGISTRATION_TICKET_REFUND_REQUESTED_ADMIN",
         "subject": "[{{summit_name}}] - Ticket Refund Requested",
@@ -246,7 +246,7 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n    </style>\n</head>\n<body>\n<p>\n    Hi Admin, User {{ owner_full_name }}, ticket {{ ticket_number }} for {{ summit_name }}\n</p>\n<p>\n    has issued a refund request.\n</p>\n<p>Cheers,<br/>{{summit_name}} Support Team</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -255,8 +255,8 @@
     "model": "api.mailtemplate",
     "pk": 15,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "registration@fntech.com",
         "identifier": "REGISTRATION_TICKET_REFUND_REQUESTED_OWNER",
         "subject": "[{{summit_name}}] Your ticket refund request for {{summit_name}} has been received",
@@ -264,7 +264,7 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n        .order_list {\n            list-style-type: none;\n        }\n\n        a {\n            color: #337ab7;\n            text-decoration: none;\n        }\n\n        p {\n            line-height: 24px;\n            margin-bottom: 30px;\n        }\n\n        .details_needed {\n            font-weight: bold;\n            color: rgb(204, 153, 51);\n        }\n\n    </style>\n</head>\n<body>\n<p>\n<p>\n    Hey {{ owner_full_name }}, your refund request for <b>{{ summit_name }}</b> has been received.\n</p>\n<p>\n    Your refund request was for the ticket:\n</p>\n<p>\n<b>{{ ticket_number }}</b>\n<ul>\n    <li>Type: {{ ticket_type_name }}</li>\n    <li>\n       {% if ticket_owner is defined and ticket_owner|length %}\n            ({{ ticket_owner }})\n       {% else %}\n            <span class=\"details_needed\">Attendee: UNASSIGNED</span>\n       {% endif %}\n    </li>\n    <li>\n        Promo Code:\n         {% if ticket_promo_code is defined and ticket_promo_code|length %}\n            ({{ ticket_promo_code }})\n        {% else %}\n            None\n       {% endif %}\n    </li>\n    <li>Price: {{ ticket_currency_symbol }}{{ ticket_amount }} {{ ticket_currency }}</li>\n</ul>\n</p>\n<p>\n    You will be notified shortly if your refund request is approved or not. If you have any immediate questions or\n    concerns please feel free to contact <a href=\"mailto:{{ support_email }}\" target=\"_blank\">{{ support_email }}</a>.\n</p>\n<p>\n    Thank you! <br>\n    {{ summit_name }} Support Team\n</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -273,8 +273,8 @@
     "model": "api.mailtemplate",
     "pk": 16,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "fntech@tipit.net",
         "identifier": "REGISTRATION_EXTERNAL_INGESTION_SUCCESSFUL",
         "subject": "[{{summit_name}}] - External Registration Data Ingestion",
@@ -282,7 +282,7 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n\n    </style>\n</head>\n<body>\n<p>\n    Hi, the external registration data ingestion for {{ summit_name }}\n    was successful.\n</p>\n<p>Cheers,<br/>{{ summit_name }} Support Team</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }
@@ -291,8 +291,8 @@
     "model": "api.mailtemplate",
     "pk": 17,
     "fields": {
-        "created": "2020-05-15T01:41:40Z",
-        "modified": "2020-05-15T01:41:40Z",
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
         "from_email": "fntech@tipit.net",
         "identifier": "REGISTRATION_EXTERNAL_INGESTION_UNSUCCESSFUL",
         "subject": "[{{summit_name}}] - External Registration Data Ingestion",
@@ -300,7 +300,421 @@
         "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n    <style>\n\n    </style>\n</head>\n<body>\n<p>\n    Hi, the external registration data ingestion for {{ summit_name }}\n    was unsuccessful.\n</p>\n<p>\n   Check errors bellow:\n</p>\n<p>\n   {{ error_message }}\n</p>\n    <p>Cheers,<br/>{{ summit_name }} Support Team</p>\n</body>\n</html>",
         "max_retries": 1,
         "is_active": true,
-        "locale": "en",
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 18,
+    "fields": {
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
+        "from_email": "fntech@tipit.net",
+        "identifier": "BOOKABLE_ROOMS_RESERVATION_CANCELED",
+        "subject": "[{{summit_name}}] Your Room Reservation had been canceled",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ owner_fullname }},\n</p>\n<p>\n    Your Reservation for room {{ room_complete_name }} got canceled because you did not take any action to pay it.\n</p>\n<p>\n<ul>\n    <li>Id {{ reservation_id }}</li>\n    <li>Owner {{ owner_fullname }}</li>\n    <li>Email {{ owner_email }}</li>\n    <li>From {{ reservation_start_datetime }}</li>\n    <li>To {{ reservation_end_datetime }}</li>\n    <li>Created {{ reservation_created_datetime }}</li>\n    <li>Amount {{ reservation_currency }} {{ reservation_amount }}</li>\n</ul>\n</p>\n<p>Cheers,<br/>{{ summit_name}} Support Team</p>\n</body>\n</html>\n",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 19,
+    "fields": {
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
+        "from_email": "fntech@tipit.net",
+        "identifier": "BOOKABLE_ROOMS_RESERVATION_CREATED",
+        "subject": "[{{summit_name}}] Room Reservation Created",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ owner_fullname }},\n</p>\n<p>\n    Your Reservation for room {{ room_complete_name }} has been created successfully.\n</p>\n<p>Cheers,<br/>{{ summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 20,
+    "fields": {
+        "created": "2020-05-23T18:52:45Z",
+        "modified": "2020-05-23T18:52:45Z",
+        "from_email": "fntech@tipit.net",
+        "identifier": "BOOKABLE_ROOMS_RESERVATION_PAYMENT_CONFIRMED",
+        "subject": "[{{summit_name}}] Your Room Reservation is confirmed",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ owner_fullname }}\n</p>\n<p>\n    Your Reservation for room {{ room_complete_name }} has been confirmed.\n</p>\n<p>\n    Please take note of the reservation info bellow:\n</p>\n<p>\n    <ul>\n        <li>{{ room_complete_name }}</li>\n        <li>From {{ reservation_start_datetime }}</li>\n        <li>To {{ reservation_end_datetime }}</li>\n        <li>Room Capacity {{ room_capacity }}</li>\n        <li>Amount {{ reservation_currency }} {{ reservation_amount }}</li>\n    </ul>\n</p>\n<p>Cheers,<br/>{{ summit_name }} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 21,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "fntech@tipit.net",
+        "identifier": "BOOKABLE_ROOMS_RESERVATION_REFUND_ACCEPTED",
+        "subject": "[{{summit_name}}] Your Room Reservation Refund is Accepted",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ owner_fullname }},\n</p>\n<p>\n    Your Refund Request Reservation for room {{ room_complete_name }} is confirmed.\n</p>\n<p>\n    Please take note of the reservation info below:\n</p>\n<p>\n    <ul>\n    <li>{{ room_complete_name }}</li>\n    <li>From {{ reservation_start_datetime }}</li>\n    <li>To {{ reservation_end_datetime }}</li>\n    <li>Room Capacity {{ room_capacity }}</li>\n    <li>Amount {{ reservation_currency }} {{ reservation_refunded_amount }}</li>\n    </ul>\n</p>\n<p>Cheers,<br/>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 22,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "fntech@tipit.net",
+        "identifier": "BOOKABLE_ROOMS_RESERVATION_REFUND_REQUESTED_OWNER",
+        "subject": "[{{summit_name}}] Your Room Reservation Refund is requested",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ owner_fullname }}\n</p>\n<p>\n    You had requested a refund for your reservation.\n</p>\n<p>\n    Please take note of the reservation info below:\n</p>\n<p>\n    <ul>\n        <li>Id {{ reservation_id }}</li>\n        <li>Owner {{ owner_fullname }}</li>\n        <li>Email {{ owner_email }}</li>\n        <li>From {{ reservation_start_datetime }}</li>\n        <li>To {{ reservation_end_datetime }}</li>\n        <li>Created {{ reservation_created_datetime }}</li>\n        <li>Amount {{ reservation_currency }} {{ reservation_amount }}</li>\n    </ul>\n</p>\n<p>Cheers,<br/>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 23,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "fntech@tipit.net",
+        "identifier": "BOOKABLE_ROOMS_RESERVATION_REFUND_REQUESTED_ADMIN",
+        "subject": "[{{summit_name}}] There is a new reservation refund request available",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    There is a new reservation refund request available to process\n</p>\n<p>\n    Please take note of the reservation info below:\n</p>\n<p>\n    <ul>\n    <li>Id {{ reservation_id }}</li>\n    <li>{{ room_complete_name }}</li>\n    <li>Owner {{ owner_fullname }}</li>\n    <li>Email {{ owner_email }}</li>\n    <li>From {{ reservation_start_datetime }}</li>\n    <li>To {{ reservation_end_datetime }}</li>\n    <li>Created {{ reservation_created_datetime }}</li>\n    <li>Amount {{ reservation_currency }} {{ reservation_amount }}</li>\n</ul>\n</p>\n<p>Cheers,<br/>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 24,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "noreply@fntech.com",
+        "identifier": "SUMMIT_SCHEDULE_RSVP_REGULAR_SEAT",
+        "subject": "[{{summit_name}}] Thank you for your RSVP",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Thank you for your RSVP to <strong>{{ event_title }}</strong> at {{ event_date }} . For your convenience, we have added this to My Schedule within the Summit Management tool.</p>\n@if(!empty($event_uri))\n{% if event_uri is defined and event_uri|length %}\n<p>Be sure to synch it to your calendar by going <a href=\"{{ event_uri }}\" target=\"_blank\">here</a>.</p>\n{% endif %}\nPlease present a printed copy of this email at the entrance where the event is being held.<br/><br/>\n\n******************************************************************************************<br/>\n<p>\n    Attendee: {{ owner_fullname }}<br/>\n    Event: {{ event_title }}<br/>\n    Confirmation #: {{ confirmation_number !}<br/>\n</p>\n******************************************************************************************<br/>\n\n<p>Cheers,<br/>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 25,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "noreply@fntech.com",
+        "identifier": "SUMMIT_SCHEDULE_RSVP_WAITLIST_SEAT",
+        "subject": "[{{summit_name}}] Waitlist for Event",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Thank you for signing up to <strong>{{ event_title }}<</strong> at {{ event_date }} At the moment, this class is full.\n    However, you've been added to the waitlist.  If space becomes available, the Workshop presenter will contact you to let you know.</p>\n<p>For your convenience, we have added this to My Schedule within the Summit Management tool.</p>\n{% if event_uri is defined and event_uri|length %}\nBe sure to synch it to your calendar by going <a href=\"{{ event_uri }}\" target=\"_blank\">here</a>.\n{% endif %}\nIf you are removed from the waitlist, please present a printed copy of this email at the entrance where the event is being held.<br/><br/>\n******************************************************************************************<br/>\n<p>\n    Attendee: {{ owner_fullname }}<br/>\n    Event: {{ event_title }}<br/>\n    Confirmation #: {{ confirmation_number }}<br/>\n</p>\n******************************************************************************************<br/>\n<p>Cheers,<br/>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 26,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "noreply@fntech.com",
+        "identifier": "SUMMIT_SCHEDULE_SHARE_EVENT",
+        "subject": "[{{summit_name}}] Fwd {{event_title}}",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>{{ event_title }}.</p>\n<p>{{ event_description }}</p>\n<br><br>\n<p>\nCheck it out: <a href=\"{{ event_url }}\" target=\"_blank\">{{ event_url }}</a>\n</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 27,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "noreply@fntech.com",
+        "identifier": "SUMMIT_REGISTRATION_MEMBER_PROMO_CODE",
+        "subject": "[{{summit_name}}] Your Registration Promo Code {{promo_code}}",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ owner_fullname }},\n</p>\n<p>Register for the <a href=\"{{registration_url}}\">{{summit_name}}</a> using this complimentary registration code (<b>{{promo_code}}</b>).</p>\n<p>Cheers,<br/>{{ summit_name }} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 28,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "noreply@fntech.com",
+        "identifier": "SUMMIT_REGISTRATION_SPEAKER_PROMO_CODE",
+        "subject": "[{{summit_name}}] Your Registration Promo Code {{promo_code}}",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ owner_fullname }},\n</p>\n<p>Register for the <a href=\"{{registration_url}}\">{{summit_name}}</a> using this complimentary registration code (<b>{{promo_code}}</b>).</p>\n<p>Cheers,<br/>{{ summit_name }} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 29,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_CREATOR_NOTIFICATION",
+        "subject": "[{{summit_name}}] Presentation Received",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{creator_full_name}} --</p>\n\n<p>Thank you for your submission to the {{selection_plan_name}} at {{summit_name}}, {{summit_date}}.</p>\n\n<p>Session details can be found here: <a href=\"{{presentation_edit_link}}\" title=\"click on this link to review your presentation data\">{{presentation_edit_link}}</a></p>\n\n<p>IMPORTANT! Please take some time to <a href=\u201d{{bio_edit_link}}\" title=\"click on this link to review your data\">review your Speaker Profile</a>.</p>\n\n<p><strong>SO WHAT HAPPENS NEXT AND WHEN WILL I BE NOTIFIED?</strong></p>\n\n<p>The Call for Presentations will remain open until {{until_date}}. The Programming Committee will follow the <a href=\"{{selection_process_link}}\">selection process</a>.</p>\n\n<p><strong>CAN I EDIT MY SUBMISSIONS OR ADD NEW ONES?</strong><br/>\nAbsolutely. You can continue to edit your submissions or add new ones until {{until_date}}.\nPlease go to <a href=\"{{speaker_management_link}}\">{{speaker_management_link}}</a></p>\n\n<p><strong>WHAT IF I DON\u2019T KNOW MY PASSWORD?</strong><br/>\nYour password can be reset here: <a href=\"{{reset_password_link}}\">{{reset_password_link}}</a></p></p>\n\n<p><strong>WHAT IF I HAVE ADDITIONAL QUESTIONS?</strong><br/>\nPlease feel free to contact us at <a href=\"mailto:{{support_email}}\">{{support_email}}</a></p>\n\n<p>Thanks again! We look forward to seeing you at {{summit_name}}.</p>\n\n<p>Sincerely,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 30,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_NOTIFICATION",
+        "subject": "[{{summit_name}}] Speaker Notification",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_full_name}} --</p>\n\n<p>Good news! {{creator_full_name}}, has included you to be a presenter for a session that they submitted for consideration to be included in the upcoming {{summit_name}}, {{summit_date}}.</p>\n\n<p>The session details can be found here: <a href=\"{{presentation_edit_link}}\" title=\"click on this link to review your presentation data\">{{presentation_edit_link}}</a></p>\n\n<p>IMPORTANT! Please take some time to <a href=\"{{bio_edit_link}}\" title=\"click on this link to review your data\">review your Speaker Profile</a>.</p>\n\n<p><strong>SO WHAT HAPPENS NEXT AND WHEN WILL I BE NOTIFIED?</strong></p>\n\n<p>The Call for Presentations will remain open until {{until_date}}. The Programming Committee will follow the <a href=\"{{selection_process_link}}\">selection process</a>.</p>\n\n<p><strong>CAN I EDIT MY SUBMISSIONS OR ADD NEW ONES?</strong><br/>\nAbsolutely. You can continue to edit your submissions or add new ones until {{until_date}}.\nPlease go to <a href=\"{{speaker_management_link}}\">{{speaker_management_link}}</a></p>\n\n<p><strong>WHAT IF I DON\u2019T KNOW MY PASSWORD?</strong><br/>\nYour password can be reset here: <a href=\"{{reset_password_link}}\">{{reset_password_link}}</a></p></p>\n\n<p><strong>WHAT IF I HAVE ADDITIONAL QUESTIONS?</strong><br/>\nPlease feel free to contact us at <a href=\"mailto:{{support_email}}\">{{support_email}}</a></p>\n\n<p>Thanks again! We look forward to seeing you at {{summit_name}}.</p>\n\n<p>Sincerely,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 31,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_CREATION",
+        "subject": "[{{tenant_name}}] You are now a speaker",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_full_name}} --</p>\n<p>You have been added as a Speaker. For your name/bio to appear, you must click <a href=\"{{bio_edit_link}}\">here</a> to complete your membership and modify your speaker profile.\nIf you have questions/concerns, please email <a href=\"mailto:{{support_email}}\">{{support_email}}</a> .</p>\n<p>Thank you</p>\n<p>Sincerely,</p>\n<p>{{tenant_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 32,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_SPEAKER_EDIT_PERMISSION_APPROVED",
+        "subject": "[{{tenant_name}}] Speaker Profile Edit Permission Approved",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ $requested_by_full_name }},\n</p>\n<p>\n    User {{ $speaker_full_name }} has approved your request to edit his/her Speaker Profile.\n</p>\n<p>Thank you</p>\n<p>Sincerely,</p>\n<p>{{tenant_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 33,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_SPEAKER_EDIT_PERMISSION_REJECTED",
+        "subject": "[{{tenant_name}}] Speaker Profile Edit Permission Rejected",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ $requested_by_full_name }},\n</p>\n<p>\n    User {{ $speaker_full_name }} has rejected your request to edit his/her Speaker Profile.\n</p>\n<p>Thank you</p>\n<p>Sincerely,</p>\n<p>{{tenant_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 34,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_SPEAKER_EDIT_PERMISSION_REQUEST",
+        "subject": "[{{tenant_name}}]  Speaker Profile Edit Permission Requested",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>\n    Dear {{ $speaker_full_name }},\n</p>\n<p>\n    User {{ $requested_by_full_name}} has requested to be able to edit your Speaker Profile.\n</p>\n<p>\n    To Allow that please click on the following link <a href=\"{{ $link }}\">Allow</a>.\n</p>\n<p>Thank you</p>\n<p>Sincerely,</p>\n<p>{{tenant_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 35,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_ACCEPTED_ONLY",
+        "subject": "[{{summit_name}}] Session Accepted",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_fullname}} -- </p>\n<p>Congratulations, at least one of your submissions has been accepted for the <a href=\"{{summit_site_url}}\">{{summit_name}}</a>!</p>\n<p>In order to confirm yourself as a speaker, you must complete the following steps.</p>\n<p>\n<b>Step One</b><br/>\nConfirm you are able and approved to travel to attend the Summit and present the selected talk by clicking this confirmation link: <a href=\"{{speaker_confirmation_link}}\">{{speaker_confirmation_link}}}</a>\n</p>\n<p>\n<b>Step Two</b><br/>\n<a href=\"{{registration_link}}\">Register for the Summit</a> using this registration code (<b>{{{promo_code}}}</b>) to receive your complimentary {{ticket_type}} ticket. Please be sure to select the {{ticket_type}} ticket type before you enter your discount code.<br/>\n<ul>\n<li>In order to register for free, please note this unique and single use code must be used by {{promo_code_until_date}}.</li>\n</ul>\n</p>\n<p>Sessions accepted for the {{summit_name}}:<br/>\n<ul>\n{% for presentation in accepted_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Helpful Links:<br/>\n<ul>\n<li><a href=\"{{summit_schedule_url}}\">Review the full {{summit_name}} schedule</a></li>\n<li><a href=\"{{bio_edit_link}}\">Update your Speaker Profile</a></li>\n</ul>\n</p>\n<p>Cheers,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 36,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_REJECTED_ONLY",
+        "subject": "[{{summit_name}}] Submission Update",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_fullname}} -- </p>\n<p>Thank you for submitting a speaking proposal for the <a href=\"{{summit_site_url}}\">{{summit_name}}</a>.\nWe received an incredible amount of speaking submissions, and had to make some tough decisions for the schedule.</p>\n<p>Unfortunately, your submission was not chosen to be part of the official agenda this time around. You submitted:<br/>\n<ul>\n{% for presentation in rejected_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Thank you so much for your contribution to the {{summit_name}}, we look forward to seeing you at {{summit_name}}!</p>\n</p>\n<p>Cheers,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 37,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_ACCEPTED_REJECTED",
+        "subject": "[{{summit_name}}] Session Accepted",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_fullname}} -- </p>\n<p>Congratulations, at least one of your submissions has been accepted for the <a href=\"{{summit_site_url}}\">{{summit_name}}</a>!</p>\n<p>In order to confirm yourself as a speaker, you must complete the following steps.</p>\n<p>\n<b>Step One</b><br/>\nConfirm you are able and approved to travel to attend the Summit and present the selected talk by clicking this confirmation link: <a href=\"{{speaker_confirmation_link}}\">{{speaker_confirmation_link}}}</a>\n</p>\n<p>\n<b>Step Two</b><br/>\n<a href=\"{{registration_link}}\">Register for the Summit</a> using this registration code (<b>{{{promo_code}}}</b>) to receive your complimentary {{ticket_type}} ticket. Please be sure to select the {{ticket_type}} ticket type before you enter your discount code.<br/>\n<ul>\n<li>In order to register for free, please note this unique and single use code must be used by {{promo_code_until_date}}.</li>\n</ul>\n</p>\n<p>Sessions accepted for the {{summit_name}}:<br/>\n<ul>\n{% for presentation in accepted_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Unfortunately, these submissions were not chosen to be part of the official agenda:<br/>\n<ul>\n{% for presentation in rejected_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Helpful Links:<br/>\n<ul>\n<li><a href=\"{{summit_schedule_url}}\">Review the full {{summit_name}} schedule</a></li>\n<li><a href=\"{{bio_edit_link}}\">Update your Speaker Profile</a></li>\n</ul>\n</p>\n<p>Cheers,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 38,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_ALTERNATE_REJECTED",
+        "subject": "[{{summit_name}}] Submission Update",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_fullname}} -- </p>\n<p>Thank you for submitting a speaking proposal for the <a href=\"{{summit_site_url}}\">{{summit_name}}</a>.</p>\n<p>At least one of your submissions has been selected as a Lightning Talk (10 minute). This session has also been designated as an Alternate, which means it may be added to the agenda as a full, 40 minute breakout session, if other sessions don't work out. We will proactively reach out to you if a full breakout slot becomes available for your session.</p>\n<p>In order to confirm your availability as a lightning talk speaker and an official alternate, you must complete the following steps.</p>\n<p>\n<b>Step One</b><br/>\nConfirm you are able and approved to travel to attend the Summit and present the selected talk by clicking this confirmation link: <a href=\"{{speaker_confirmation_link}}\">{{speaker_confirmation_link}}}</a>\n</p>\n<p>\n<b>Step Two</b><br/>\n<a href=\"{{registration_link}}\">Register for the Summit</a> using this registration code (<b>{{{promo_code}}}</b>) to receive your complimentary {{ticket_type}} ticket. Please be sure to select the {{ticket_type}} ticket type before you enter your discount code.<br/>\n<ul>\n<li>In order to register for free, please note this unique and single use code must be used by {{promo_code_until_date}}.</li>\n</ul>\n</p>\n<p>Sessions selected as a Lightning Talk and Alternate for the {{summit_name}}:<br/>\n<ul>\n{% for presentation in alternate_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Unfortunately, these submissions were not chosen to be part of the official agenda:<br/>\n<ul>\n{% for presentation in rejected_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Helpful Links:<br/>\n<ul>\n<li><a href=\"{{summit_schedule_url}}\">Review the full {{summit_name}} schedule</a></li>\n<li><a href=\"{{bio_edit_link}}\">Update your Speaker Profile</a></li>\n</ul>\n</p>\n<p>Cheers,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 39,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_ALTERNATE_ONLY",
+        "subject": "[{{summit_name}}] Submission Update",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_fullname}} -- </p>\n<p>Thank you for submitting a speaking proposal for the <a href=\"{{summit_site_url}}\">{{summit_name}}</a>.</p>\n<p>At least one of your submissions has been selected as a Lightning Talk (10 minute). This session has also been designated as an Alternate, which means it may be added to the agenda as a full, 40 minute breakout session, if other sessions don't work out. We will proactively reach out to you if a full breakout slot becomes available for your session.</p>\n<p>In order to confirm your availability as a lightning talk speaker and an official alternate, you must complete the following steps.</p>\n<p>\n<b>Step One</b><br/>\nConfirm you are able and approved to travel to attend the Summit and present the selected talk by clicking this confirmation link: <a href=\"{{speaker_confirmation_link}}\">{{speaker_confirmation_link}}}</a>\n</p>\n<p>\n<b>Step Two</b><br/>\n<a href=\"{{registration_link}}\">Register for the Summit</a> using this registration code (<b>{{{promo_code}}}</b>) to receive your complimentary {{ticket_type}} ticket. Please be sure to select the {{ticket_type}} ticket type before you enter your discount code.<br/>\n<ul>\n<li>In order to register for free, please note this unique and single use code must be used by {{promo_code_until_date}}.</li>\n</ul>\n</p>\n<p>Sessions selected as a Lightning Talk and Alternate for the {{summit_name}}:<br/>\n<ul>\n{% for presentation in alternate_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Helpful Links:<br/>\n<ul>\n<li><a href=\"{{summit_schedule_url}}\">Review the full {{summit_name}} schedule</a></li>\n<li><a href=\"{{bio_edit_link}}\">Update your Speaker Profile</a></li>\n</ul>\n</p>\n<p>Cheers,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
+        "parent": null,
+        "allowed_clients": []
+    }
+},
+{
+    "model": "api.mailtemplate",
+    "pk": 40,
+    "fields": {
+        "created": "2020-05-23T18:52:46Z",
+        "modified": "2020-05-23T18:52:46Z",
+        "from_email": "speakersupport@fntech.com",
+        "identifier": "SUMMIT_SUBMISSIONS_PRESENTATION_SPEAKER_ACCEPTED_ALTERNATE",
+        "subject": "[{{summit_name}}] Session Accepted",
+        "plain_content": "",
+        "html_content": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n<p>Hello {{speaker_fullname}} -- </p>\n<p>Congratulations, at least one of your submissions has been accepted for the <a href=\"{{summit_site_url}}\">{{summit_name}}</a>!</p>\n<p>Additionally, at least one of your submissions has been selected as a Lightning Talk (10 minute). This session has also been designated as an Alternate, which means it may be added to the agenda as a full, 40 minute breakout session,\nif other sessions do not work out. We will proactively reach out to you if a full breakout slot becomes available for your session.</p>\n<p>In order to confirm yourself as a speaker, you must complete the following steps.</p>\n<p>\n<b>Step One</b><br/>\nConfirm you are able and approved to travel to attend the Summit and present the selected talk by clicking this confirmation link: <a href=\"{{speaker_confirmation_link}}\">{{speaker_confirmation_link}}}</a>\n</p>\n<p>\n<b>Step Two</b><br/>\n<a href=\"{{registration_link}}\">Register for the Summit</a> using this registration code (<b>{{{promo_code}}}</b>) to receive your complimentary {{ticket_type}} ticket. Please be sure to select the {{ticket_type}} ticket type before you enter your discount code.<br/>\n<ul>\n<li>In order to register for free, please note this unique and single use code must be used by {{promo_code_until_date}}.</li>\n</ul>\n</p>\n<p>Sessions accepted for the {{summit_name}}:<br/>\n<ul>\n{% for presentation in accepted_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Sessions selected as a Lightning Talk and Alternate:<br/>\n<ul>\n{% for presentation in alternate_presentations %}\n    <li>{{presentation.title}}</li>\n{% endfor %}\n</ul></p>\n<p>Helpful Links:<br/>\n<ul>\n<li><a href=\"{{summit_schedule_url}}\">Review the full {{summit_name}} schedule</a></li>\n<li><a href=\"{{bio_edit_link}}\">Update your Speaker Profile</a></li>\n</ul>\n</p>\n<p>Cheers,<br/>\n<p>{{summit_name}} Support Team</p>\n</body>\n</html>",
+        "max_retries": 1,
+        "is_active": true,
+        "is_system": true,
         "parent": null,
         "allowed_clients": []
     }

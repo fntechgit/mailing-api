@@ -130,7 +130,7 @@ class EmailEndpointsTests(APITestCase):
                 'content': 'this is the content',
             },
             'to_email': 'smarcet@gmail.com,sebastian@tipit.net',
-            'template': self.child.id,
+            'template': self.child.identifier,
         }
 
         response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token),

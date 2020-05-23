@@ -8,13 +8,13 @@ from .client import Client
 class MailTemplate(TimeStampedModel):
 
     from_email = models.EmailField(blank=False, null=False)
-    identifier = models.SlugField(blank=False, max_length=256)
+    identifier = models.SlugField(blank=False, max_length=255, unique=True)
     subject = models.CharField(max_length=256, blank=False, null=False)
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
     max_retries = models.IntegerField(default=1)
     is_active = models.BooleanField(default=False)
-    locale = models.CharField(max_length=2, default='en', blank=False)
+    is_system = models.BooleanField(default=False)
 
     @property
     def has_parent(self) -> bool:
@@ -28,9 +28,6 @@ class MailTemplate(TimeStampedModel):
 
     def get_parent_plain_content(self) -> str:
         return self.parent.plain_content if self.has_parent else None
-
-    class Meta:
-        unique_together = ('identifier', 'locale',)
 
     def save(self, *args, **kwargs):
         if not self.html_content is None:
