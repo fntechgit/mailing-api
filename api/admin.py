@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from .models import MailTemplate, Client, Mail
 # custom models
-from .utils import config
 from django.forms.widgets import DateTimeInput
 admin.site.site_header = _('Mailing API Admin')
 

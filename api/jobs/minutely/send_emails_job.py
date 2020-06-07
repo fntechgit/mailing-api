@@ -1,5 +1,5 @@
 import logging
-import sys
+import traceback
 
 from django_extensions.management.jobs import MinutelyJob
 from django_injector import inject
@@ -19,4 +19,4 @@ class Job(MinutelyJob):
             with FileLock(self.__class__, False):
                 service.process_pending_emails(config('SEND_EMAILS_JOB_BATCH'))
         except:
-            logging.getLogger('jobs').error(sys.exc_info())
+            logging.getLogger('jobs').error(traceback.format_exc())
