@@ -6,7 +6,7 @@ from rest_framework.serializers import ValidationError
 
 from . import TimestampField, ClientReadSerializer
 from ..models import MailTemplate, Client
-from ..utils import is_empty, JinjaRender, config
+from ..utils import is_empty, JinjaRender
 
 
 class MailTemplateReadSerializer(serializers.ModelSerializer):

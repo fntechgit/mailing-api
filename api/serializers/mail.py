@@ -3,8 +3,10 @@ import logging
 from django.core.validators import EmailValidator
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ValidationError
 
+from . import MailTemplateReadSerializer
 from . import TimestampField
 from ..models import MailTemplate, Client, Mail
 from ..utils import is_empty, JinjaRender
@@ -13,6 +15,21 @@ from ..utils import is_empty, JinjaRender
 class MailReadSerializer(serializers.ModelSerializer):
     created = TimestampField()
     modified = TimestampField()
+    template = SerializerMethodField("get_template_serializer")
+
+    def get_template_serializer(self, obj):
+        expand = self.get_expand()
+        if not obj.template_id:
+            return None
+
+        if 'template' in expand:
+            return MailTemplateReadSerializer(obj.template, context=self.context).data
+        return obj.template_id
+
+    def get_expand(self):
+        request = self.context.get('request')
+        str_expand = request.GET.get('expand', '') if request else None
+        return str_expand.split(',') if str_expand else []
 
     class Meta:
         model = Mail
