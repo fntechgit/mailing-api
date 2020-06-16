@@ -59,10 +59,10 @@ sudo lsof -t -i tcp:8000 | xargs kill -9
 
 # dump data 
  
- ./manage.py dumpdata api.MailTemplate --indent 4 --format json > api/fixtures/mailtemplates.json
+python manage.py dumpdata api.MailTemplate --indent 4 --format json > api/fixtures/mailtemplates.json
  
- ./manage.py loaddata mailtemplates.json
+python manage.py loaddata mailtemplates.json
  
 # run job
 
-./manage.py runjob send_emails_job
+python manage.py runjob send_emails_job
