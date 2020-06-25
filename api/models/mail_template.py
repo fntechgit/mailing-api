@@ -53,6 +53,10 @@ class MailTemplate(TimeStampedModel):
     # methods
 
     def is_allowed_client(self, client_id:int) -> bool:
+        # if allowed clients is empty then is available for any
+        # registered OAUTH2 client
+        if self.allowed_clients.count() == 0:
+            return True
         return self.allowed_clients.filter(id=client_id).count() > 0
 
 
