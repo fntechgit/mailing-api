@@ -15,6 +15,7 @@ from ..models import Mail
 from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import MailReadSerializer, MailWriteSerializer
 from ..utils import config
+from django.db.models import Q
 
 
 class CustomClientSchema(AutoSchema):
@@ -25,7 +26,7 @@ class CustomClientSchema(AutoSchema):
 
     def get_security(self, scopes):
         return {
-            'OAuth2' : scopes
+            'OAuth2': scopes
         }
 
     def get_operation(self, path, method):
@@ -47,6 +48,7 @@ class CustomClientSchema(AutoSchema):
 class MailFilter(FilterSet):
     # could alternatively use IsoDateTimeFilter instead of assuming local time.
     is_sent = filters.BooleanFilter(method='filter_is_sent')
+    term = filters.CharFilter(method='filter_term')
 
     class Meta:
         model = Mail
@@ -54,7 +56,15 @@ class MailFilter(FilterSet):
             'subject': ['contains'],
             'from_email': ['contains'],
             'to_email': ['contains'],
+            'id': ['in'],
+            'template__identifier': ['in'],
         }
+
+    def filter_term(self, queryset, name, value):
+        if value:
+            return queryset.filter(
+                Q(subject__icontains=value) | Q(to_email__icontains=value) | Q(template__identifier__icontains=value))
+        return queryset
 
     def filter_is_sent(self, queryset, name, value):
         if value:
@@ -80,7 +90,7 @@ class MailListCreateAPIView(ListCreateAPIView):
             return MailWriteSerializer
         return MailReadSerializer
 
-    @oauth2_scope_required()
+    # @oauth2_scope_required()
     def get(self, request, *args, **kwargs):
         logging.getLogger('api').debug('calling MailListCreateAPIView::get')
         return self.list(request, *args, **kwargs)
