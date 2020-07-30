@@ -59,7 +59,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         is_active = validated_data['is_active']
 
         if is_active and not has_content:
-            raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)"))
+            raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)."))
         if is_active and parent and not parent.is_active:
             raise ValidationError(_("If you activate the template, parent should be activated too."))
 
@@ -68,11 +68,14 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         html_content = validated_data['html_content'] if 'html_content' in validated_data else None
         plain_content = validated_data['plain_content'] if 'plain_content' in validated_data else None
+        identifier = validated_data['identifier'] if 'identifier' in validated_data else None
         has_content_for_update = not is_empty(html_content) or not is_empty(plain_content)
         has_content_on_db = not is_empty(instance.html_content) or not is_empty(instance.plain_content)
         is_active_for_update = validated_data['is_active'] if 'is_active' in validated_data else None
         if is_active_for_update and not has_content_for_update and not has_content_on_db:
-            raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)"))
+            raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)."))
+        if not is_empty(identifier) and identifier != instance.idenfier and instance.is_system:
+            raise ValidationError(_("You can not change the identifier of a system template."))
         return super().update(instance, validated_data)
 
     def validate(self, data):
