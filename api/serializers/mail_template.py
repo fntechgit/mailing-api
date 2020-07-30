@@ -74,7 +74,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         is_active_for_update = validated_data['is_active'] if 'is_active' in validated_data else None
         if is_active_for_update and not has_content_for_update and not has_content_on_db:
             raise ValidationError(_("If you activate the template at least should have a body content (HTML/PLAIN)."))
-        if not is_empty(identifier) and identifier != instance.idenfier and instance.is_system:
+        if not is_empty(identifier) and identifier != instance.identifier and instance.is_system:
             raise ValidationError(_("You can not change the identifier of a system template."))
         return super().update(instance, validated_data)
 
