@@ -15,6 +15,8 @@ from ..utils import is_empty, JinjaRender
 class MailReadSerializer(serializers.ModelSerializer):
     created = TimestampField()
     modified = TimestampField()
+    sent_date = TimestampField()
+
     template = SerializerMethodField("get_template_serializer")
 
     def get_template_serializer(self, obj):
