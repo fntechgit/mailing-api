@@ -12,6 +12,8 @@ from jsonfield import JSONField
 class Mail(TimeStampedModel):
     from_email = models.EmailField(blank=False)
     to_email = models.CharField(max_length=1024, blank=False)
+    cc_email = models.CharField(max_length=1024, blank=True)
+    bcc_email = models.CharField(max_length=1024, blank=True)
     subject = models.CharField(max_length=256, blank=False)
     payload = JSONField(blank=True, default='')
     plain_content = models.TextField(blank=True, default='')

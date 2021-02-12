@@ -69,6 +69,8 @@ class MailWriteSerializer(serializers.ModelSerializer):
     def validate(self, data):
         validate_email = EmailValidator()
         to_email = data['to_email'] if 'to_email' in data else None
+        cc_email = data['cc_email'] if 'cc_email' in data else None
+        bcc_email = data['bcc_email'] if 'bcc_email' in data else None
         subject = data['subject'] if 'subject' in data else None
 
         owner = self.get_owner()
@@ -81,8 +83,26 @@ class MailWriteSerializer(serializers.ModelSerializer):
             raise ValidationError(_("to_email is mandatory."))
 
         # validate if its a list of emails
+        to_email_list = []
         for r in to_email.split(','):
             validate_email(r)
+            to_email_list.append(r)
+
+        cc_email_list = []
+        if not is_empty(cc_email):
+            for r in cc_email.split(','):
+                validate_email(r)
+                if r in to_email_list:
+                    raise ValidationError(_("cc {email} is already on to_email list.".format(email=r)))
+                cc_email_list.append(r)
+
+        if not is_empty(bcc_email):
+            for r in bcc_email.split(','):
+                validate_email(r)
+                if r in to_email_list:
+                    raise ValidationError(_("bcc {email} is already on to_email list.".format(email=r)))
+                if r in cc_email_list:
+                    raise ValidationError(_("bcc {email} is already on cc_email list.".format(email=r)))
 
         if template is None:
             raise ValidationError(_("template is mandatory."))
@@ -128,5 +148,5 @@ class MailWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mail
-        fields = ['created', 'modified', 'to_email', 'template', 'payload', 'subject']
+        fields = ['created', 'modified', 'to_email','cc_email','bcc_email', 'template', 'payload', 'subject']
         read_only_fields = ['html_content', 'plain_content']

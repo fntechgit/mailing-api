@@ -71,6 +71,8 @@ class EmailSendingTests(APITestCase):
                 ]
             },
             'to_email': 'smarcet@gmail.com,sebastian@tipit.net',
+            'cc_email': 'smarcet+3@gmail.com',
+            'bcc_email': 'smarcet+2@gmail.com',
             'template': self.child.identifier,
         }
 
