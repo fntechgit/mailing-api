@@ -62,10 +62,10 @@ class SendGridEmailService(EmailService):
 
         try:
             from_email = Email(m.from_email)
-            to_email = To(config('DEV_EMAIL')) if config('DEBUG', False) else To(m.to_email)
+            to_emails = To(config('DEV_EMAIL')) if config('DEBUG', False) else list(map(lambda e: To(e), m.to_email.split(',')))
             html_content = Content("text/html", m.html_content) if not is_empty(m.html_content) else None
             plain_content = Content("text/plain", m.plain_content) if not is_empty(m.plain_content) else None
-            mail = SendGridMail(from_email, to_email, m.subject)
+            mail = SendGridMail(from_email, to_emails, m.subject)
 
             if html_content is not None:
                 mail.add_content(html_content)

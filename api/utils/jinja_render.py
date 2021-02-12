@@ -100,5 +100,5 @@ class JinjaRender(Render):
 
             return plain_render, html_render
         except TemplateSyntaxError as e:
-            logging.getLogger('api').warning(e)
+            logging.getLogger('api').error(e)
             raise ValidationError(_("Invalid template syntax."))
