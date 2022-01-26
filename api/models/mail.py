@@ -10,7 +10,7 @@ from jsonfield import JSONField
 
 
 class Mail(TimeStampedModel):
-    from_email = models.EmailField(blank=False)
+    from_email = models.CharField(max_length=254,blank=False, null=False)
     to_email = models.CharField(max_length=1024, blank=False)
     cc_email = models.CharField(max_length=1024, blank=True)
     bcc_email = models.CharField(max_length=1024, blank=True)
