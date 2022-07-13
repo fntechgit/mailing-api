@@ -18,6 +18,7 @@ from sendgrid.helpers.mail import Mail as SendGridMail, Content, To, Cc, Bcc, Em
 from api.models import Mail
 from api.services import EmailService
 from api.utils import is_empty, config
+from python_http_client.exceptions import HTTPError
 
 
 class SendGridEmailService(EmailService):
@@ -123,6 +124,12 @@ class SendGridEmailService(EmailService):
             m.mark_as_sent()
             m.save(force_update=True)
             logging.getLogger('jobs').debug('email {id} successfully sent'.format(id=m.id))
+        except HTTPError as e:
+            logging.getLogger('jobs').warning(
+                'email {id} failed'.format(id=m.id))
+            logging.getLogger('jobs').error(e.to_dict)
+            m.mark_retry(e.__str__())
+            m.save(force_update=True)
         except Exception as e:
             logging.getLogger('jobs').warning(
                 'email {id} failed'.format(id=m.id))
