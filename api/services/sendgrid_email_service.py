@@ -68,11 +68,11 @@ class SendGridEmailService(EmailService):
             bcc_emails = []
             to_emails = To(config('DEV_EMAIL')) if config('DEBUG', False) else list(
                 map(lambda e: To(e), m.to_email.split(',')))
-            # CC
-            if not is_empty(m.cc_email):
+            # CC ( only on non debug mode)
+            if not config('DEBUG', False) and is_empty(m.cc_email):
                 cc_emails = list(map(lambda e: Cc(e), m.cc_email.split(',')))
-            # BCC
-            if not is_empty(m.bcc_email):
+            # BCC ( only on non debug mode)
+            if not config('DEBUG', False) and not is_empty(m.bcc_email):
                 bcc_emails = list(map(lambda e: Bcc(e), m.bcc_email.split(',')))
 
             html_content = Content("text/html", m.html_content) if not is_empty(m.html_content) else None
