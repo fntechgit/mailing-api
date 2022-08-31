@@ -19,6 +19,7 @@ class Mail(TimeStampedModel):
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
     sent_date = models.DateTimeField(null=True, )
+    lock_date = models.DateTimeField(null=True, )
     last_error = models.TextField(blank=True, default='')
     retries = models.IntegerField(default=0)
     next_retry_date = models.DateTimeField(null=True)

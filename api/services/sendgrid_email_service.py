@@ -4,9 +4,6 @@ import string
 from datetime import datetime
 
 import pytz
-from django.db import transaction
-from django.db.models import F
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.serializers import ValidationError
 from sendgrid import sendgrid
@@ -19,6 +16,7 @@ from api.models import Mail
 from api.services import EmailService
 from api.utils import is_empty, config
 from python_http_client.exceptions import HTTPError
+from django.db import connection, transaction
 
 
 class SendGridEmailService(EmailService):
@@ -27,31 +25,55 @@ class SendGridEmailService(EmailService):
         self.sg = sendgrid.SendGridAPIClient(api_key=config('SEND_GRID_API_KEY'))
 
     def process_pending_emails(self, batch: int) -> int:
+
         logging.getLogger('jobs').debug('SendGridEmailService.process_pending_emails batch {batch}'.format(batch=batch))
+
+        with transaction.atomic(), connection.cursor() as cursor:
+            now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+            cursor.execute(
+                "CREATE TEMPORARY TABLE temp_api_email AS SELECT `api_mail`.`id` FROM `api_mail` "
+                "INNER JOIN `api_mailtemplate` ON (`api_mail`.`template_id` = `api_mailtemplate`.`id`) "
+                "WHERE (`api_mail`.`lock_date` IS NULL AND  `api_mail`.`sent_date` IS NULL "
+                "AND (`api_mail`.`next_retry_date` IS NULL OR `api_mail`.`next_retry_date` <= %s ) "
+                "AND `api_mailtemplate`.`max_retries` > `api_mail`.`retries`) "
+                "ORDER BY `api_mail`.`id` LIMIT %s", [now, batch])
+            cursor.execute(
+                "UPDATE `api_mail` "
+                "SET `api_mail`.`lock_date` = %s "
+                "WHERE EXISTS (SELECT 1 FROM temp_api_email where temp_api_email.id = api_mail.id)", [now])
+            cursor.execute("SELECT ID FROM temp_api_email")
+            records = cursor.fetchall()
+
         count = 0
         # get all not sent emails
         # which retries are not greather than template max_retries
         # and retry_date <= utc now
-        for m in Mail.objects.filter(
-                Q(sent_date__isnull=True) &
-                (
-                        Q(next_retry_date__isnull=True) | Q(
-                    next_retry_date__lte=datetime.utcnow().replace(tzinfo=pytz.UTC))
-                )
-        ).filter(template__max_retries__gt=F('retries')).order_by('id'):
-            if self._send_email(m):
-                count += 1
+        for row in records:
+            try:
+                mail_id = row[0]
+                logging.getLogger('jobs').debug(
+                    "SendGridEmailService.process_pending_emails processing mail {mail_id}".format(mail_id=mail_id))
+                if self._send_email(mail_id):
+                    count += 1
+            except Exception as e:
+                logging.getLogger('jobs').error(e)
+
         logging.getLogger('jobs').debug(
             "SendGridEmailService.process_pending_emails processed {count}".format(count=count))
 
         return count
 
-    def _generate_content_id(self, file: dict):
+    @staticmethod
+    def _generate_content_id(file: dict):
         letters = string.ascii_letters
         return 'CID_'.join(random.choice(letters) for i in range(10))
 
     @transaction.atomic
-    def _send_email(self, m: Mail) -> bool:
+    def _send_email(self, mail_id:int) -> bool:
+
+        m = Mail.objects.select_for_update().get(pk=mail_id)
+        if not m:
+            raise Mail.DoesNotExist
 
         if is_empty(m.subject):
             raise ValidationError(_('subject is empty for email {id}'.format(id=m.id)))
