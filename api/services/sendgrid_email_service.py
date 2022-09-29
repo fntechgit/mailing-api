@@ -91,7 +91,7 @@ class SendGridEmailService(EmailService):
             to_emails = To(config('DEV_EMAIL')) if config('DEBUG', False) else list(
                 map(lambda e: To(e), m.to_email.split(',')))
             # CC ( only on non debug mode)
-            if not config('DEBUG', False) and is_empty(m.cc_email):
+            if not config('DEBUG', False) and not is_empty(m.cc_email):
                 logging.getLogger('jobs').debug(
                     "SendGridEmailService._send_email mail_id {mail_id} cc_email {cc_email}".format(mail_id=mail_id,
                                                                                                     cc_email=m.cc_email))
@@ -108,12 +108,12 @@ class SendGridEmailService(EmailService):
             plain_content = Content("text/plain", m.plain_content) if not is_empty(m.plain_content) else None
             mail = SendGridMail(from_email, to_emails, m.subject)
 
-            if cc_emails is not None:
+            if cc_emails is not None and len(cc_emails) > 0:
                 logging.getLogger('jobs').debug(
                     "SendGridEmailService._send_email mail_id {mail_id} adding cc".format(mail_id=mail_id))
                 mail.add_cc(cc_emails)
 
-            if bcc_emails is not None:
+            if bcc_emails is not None and len(bcc_emails) > 0:
                 logging.getLogger('jobs').debug(
                     "SendGridEmailService._send_email mail_id {mail_id} adding bcc".format(mail_id=mail_id))
                 mail.add_bcc(bcc_emails)
