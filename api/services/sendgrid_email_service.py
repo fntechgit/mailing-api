@@ -69,7 +69,7 @@ class SendGridEmailService(EmailService):
         return 'CID_'.join(random.choice(letters) for i in range(10))
 
     @transaction.atomic
-    def _send_email(self, mail_id:int) -> bool:
+    def _send_email(self, mail_id: int) -> bool:
 
         m = Mail.objects.select_for_update().get(pk=mail_id)
         if not m:
@@ -92,9 +92,16 @@ class SendGridEmailService(EmailService):
                 map(lambda e: To(e), m.to_email.split(',')))
             # CC ( only on non debug mode)
             if not config('DEBUG', False) and is_empty(m.cc_email):
+                logging.getLogger('jobs').debug(
+                    "SendGridEmailService._send_email mail_id {mail_id} cc_email {cc_email}".format(mail_id=mail_id,
+                                                                                                    cc_email=m.cc_email))
                 cc_emails = list(map(lambda e: Cc(e), m.cc_email.split(',')))
+
             # BCC ( only on non debug mode)
             if not config('DEBUG', False) and not is_empty(m.bcc_email):
+                logging.getLogger('jobs').debug(
+                    "SendGridEmailService._send_email mail_id {mail_id} bcc_email {bcc_email}".format(mail_id=mail_id,
+                                                                                                      bcc_email=m.bcc_email))
                 bcc_emails = list(map(lambda e: Bcc(e), m.bcc_email.split(',')))
 
             html_content = Content("text/html", m.html_content) if not is_empty(m.html_content) else None
@@ -102,9 +109,13 @@ class SendGridEmailService(EmailService):
             mail = SendGridMail(from_email, to_emails, m.subject)
 
             if cc_emails is not None:
+                logging.getLogger('jobs').debug(
+                    "SendGridEmailService._send_email mail_id {mail_id} adding cc".format(mail_id=mail_id))
                 mail.add_cc(cc_emails)
 
             if bcc_emails is not None:
+                logging.getLogger('jobs').debug(
+                    "SendGridEmailService._send_email mail_id {mail_id} adding bcc".format(mail_id=mail_id))
                 mail.add_bcc(bcc_emails)
 
             if html_content is not None:
