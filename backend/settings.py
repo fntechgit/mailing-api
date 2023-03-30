@@ -100,6 +100,9 @@ DATABASES = {
         'PASSWORD': os.getenv("DB_PASSWORD"),
         'HOST': os.getenv("DB_HOST"),
         'PORT': os.getenv("DB_PORT"),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 
@@ -271,7 +274,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '1000/min',
         'user': '10000/min'
-    }
+    },
+    'UNICODE_JSON': False,
 }
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/

@@ -9,6 +9,8 @@ class MailTemplate(TimeStampedModel):
 
     from_email = models.CharField(max_length=254,blank=False, null=False)
     identifier = models.SlugField(blank=False, max_length=255, unique=True)
+    # @see https://stackoverflow.com/questions/46554484/use-emoticon-in-subject-line-for-sendgrid-email
+    # https://graphemica.com/%F0%9F%8E%89
     subject = models.CharField(max_length=256, blank=False, null=False)
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
