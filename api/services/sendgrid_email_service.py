@@ -30,6 +30,7 @@ class SendGridEmailService(EmailService):
 
         with transaction.atomic(), connection.cursor() as cursor:
             now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+            cursor.execute('SET SESSION sql_require_primary_key=0')
             cursor.execute(
                 "CREATE TEMPORARY TABLE temp_api_email AS SELECT `api_mail`.`id` FROM `api_mail` "
                 "INNER JOIN `api_mailtemplate` ON (`api_mail`.`template_id` = `api_mailtemplate`.`id`) "
@@ -43,7 +44,7 @@ class SendGridEmailService(EmailService):
                 "WHERE EXISTS (SELECT 1 FROM temp_api_email where temp_api_email.id = api_mail.id)", [now])
             cursor.execute("SELECT ID FROM temp_api_email")
             records = cursor.fetchall()
-
+            cursor.execute('SET SESSION sql_require_primary_key=1')
         count = 0
         # get all not sent emails
         # which retries are not greather than template max_retries
