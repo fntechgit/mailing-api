@@ -14,6 +14,8 @@ class MailTemplate(TimeStampedModel):
     subject = models.CharField(max_length=256, blank=False, null=False)
     plain_content = models.TextField(blank=True, default='')
     html_content = models.TextField(blank=True, default='')
+    # @see https://mjml.io/
+    mjml_content = models.TextField(blank=True, default='')
     max_retries = models.IntegerField(default=1)
     is_active = models.BooleanField(default=False)
     is_system = models.BooleanField(default=False)
