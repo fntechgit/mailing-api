@@ -66,3 +66,10 @@ python manage.py loaddata mailtemplates.json
 # run job
 
 python manage.py runjob send_emails_job
+
+# DB permissions
+
+```
+GRANT SUPER ON *.* TO 'fnopen_mailing_api_dev_user'@'172.16.1.%';
+FLUSH PRIVILEGES;
+```

@@ -45,7 +45,7 @@ class JinjaRender(Render):
 
         return templates
 
-    def _render_content(self, content: str, parent_content: str, data: dict, validate_data: bool):
+    def render_content(self, content: str, parent_content: str, data: dict, validate_data: bool):
 
         parsed_content = self.validate(JinjaRender.build_dic(content, parent_content))
         t = self.env.get_template(JinjaRender.INDEX_FILE)
@@ -66,7 +66,7 @@ class JinjaRender(Render):
     def render_subject(self, subject_content: str, data: dict) -> str:
         try:
             if not is_empty(subject_content):
-                return self._render_content(subject_content, '', data, False)
+                return self.render_content(subject_content, '', data, False)
             return subject_content
         except TemplateSyntaxError as e:
             logging.getLogger('api').warning(e)
@@ -89,11 +89,11 @@ class JinjaRender(Render):
 
             if not is_empty(html_content):
                 has_content = True
-                html_render = self._render_content(html_content, html_parent_content, data, validate_data)
+                html_render = self.render_content(html_content, html_parent_content, data, validate_data)
 
             if not is_empty(plain_content):
                 has_content = True
-                plain_render = self._render_content(plain_content, plain_parent_content, data, validate_data)
+                plain_render = self.render_content(plain_content, plain_parent_content, data, validate_data)
 
             if not has_content:
                 raise ValidationError(_("missing content (HTML or Plain)"))

@@ -42,7 +42,7 @@ class CustomClientSchema(AutoSchema):
             operation['operationId'] = str(endpoint['name'])
             operation['description'] = str(endpoint['desc'])
             operation['security'] = self.get_security(str(endpoint['scopes']))
-            if path == '/api/v1/mail-templates/{id}/render':
+            if path == '/api/v1/mail-templates/all/render':
                 operation['requestBody']['content']['application/json']['schema']['properties'] = {'payload': 'dictionary populated with template variables'}
                 operation['requestBody']['content']['application/json']['schema']['required'] = ['payload']
                 operation['responses']['200']['content']['application/json']['schema']['properties'] = {
@@ -163,32 +163,31 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class RenderMailTemplateAPIView(GenericAPIView):
+
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)
     serializer_class = MailTemplateReadSerializer
     schema = CustomClientSchema()
 
-    def get_queryset(self):
-        return MailTemplate.objects.get_queryset().order_by('id')
-
     @oauth2_scope_required()
     def put(self, request, *args, **kwargs):
         try:
             logging.getLogger('api').debug('calling RenderMailTemplateAPIView::put')
+
             data = request.data
             if 'payload' not in data:
                 raise ValidationError('payload param is not set.')
+            if 'html' not in data:
+                raise ValidationError('html param is not set.')
             payload = data['payload']
+            html = data['html']
             if not isinstance(payload, dict):
                 raise ValidationError('payload param is not a dictionary.')
-            instance = self.get_object()
-            render = JinjaRender()
-            plain, html = render.render(instance, payload, True)
-            subject = ''
-            if not is_empty(instance.subject):
-                subject = render.render_subject(instance.subject, payload)
 
-            return Response({'plain_content': plain, 'html_content': html, 'subject': subject}, status=status.HTTP_200_OK)
+            render = JinjaRender()
+            html = render.render_content(html,'', payload, False)
+            return Response({'html_content': html}, status=status.HTTP_200_OK)
+
         except ValidationError as e:
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)

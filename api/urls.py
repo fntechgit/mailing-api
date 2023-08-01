@@ -11,8 +11,8 @@ client_patterns = ([
 
 mail_template_patterns = ([
     path('', MailTemplateListCreateAPIView.as_view(), name='list-create'),
+    path('/all/render', RenderMailTemplateAPIView.as_view(), name='render'),
     path('/<int:pk>', MailTemplateRetrieveUpdateDestroyAPIView.as_view(), name='retrieve_update_destroy'),
-    path('/<int:pk>/render', RenderMailTemplateAPIView.as_view(), name='render'),
     path('/<int:pk>/allowed-clients/<int:client_id>', MailTemplateAllowedClientsAPIView.as_view(), name='allowed_clients'),
 ], 'mail-template-endpoints')
 

@@ -361,7 +361,7 @@ OAUTH2 = {
                     'scopes': os.getenv('OAUTH2_SCOPE_DELETE_TEMPLATE')
                 }
             },
-            '/api/v1/mail-templates/{id}/render':{
+            '/api/v1/mail-templates/all/render':{
                 'put':{
                     'name': _('RenderEmailTemplate'),
                     'desc': _('Render Email Template'),
