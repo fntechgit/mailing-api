@@ -10,6 +10,7 @@ from ..services import VCSService
 from django_injector import inject
 from rest_framework.fields import empty
 
+
 class MailTemplateReadSerializer(serializers.ModelSerializer):
 
     created = TimestampField()
@@ -46,19 +47,25 @@ class MailTemplateReadSerializer(serializers.ModelSerializer):
         return [ x.id for x in obj.allowed_clients.all()]
 
     def get_versions_serializer(self, obj):
-        identifier = obj.identifier
-        ext = 'html' if is_empty(obj.mjml_content) else 'mjml'
-        if not self.vcs_service is None and self.vcs_service.is_initialized():
-            filename = f'{identifier}.{ext}'
+        expand = self.get_expand()
+        if 'versions' in expand:
+            identifier = obj.identifier
+            ext = 'html' if is_empty(obj.mjml_content) else 'mjml'
 
-            commits = self.vcs_service.get_file_versions(filename)
-            return [ {
-                'sha': c.sha,
-                'html_url': c.html_url,
-                'last_modified' : c.last_modified,
-                'commit_message': c.commit.message,
-                'content': self.vcs_service.get_file_content_by_sha1(filename, c.sha)
-            } for c in commits ]
+            if not self.vcs_service is None and self.vcs_service.is_initialized():
+                filename = f'{identifier}.{ext}'
+
+                commits = self.vcs_service.get_file_versions(filename)
+                return [ {
+                    'type': ext,
+                    'sha': c.sha,
+                    'html_url': c.html_url,
+                    'last_modified' : c.last_modified,
+                    'commit_message': c.commit.message,
+                    'content': self.vcs_service.get_file_content_by_sha1(filename, c.sha)
+                } for c in commits ]
+
+        return []
 
     class Meta:
         model = MailTemplate

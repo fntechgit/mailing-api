@@ -50,6 +50,7 @@ class GithubService(VCSService):
             return self.repo.get_commits(path=filename)
         except GithubException as e:
             logging.getLogger('vcs').error(e)
+        return []
 
     def get_file_content_by_sha1(self, filename: str, sha1: str):
         try:
@@ -58,6 +59,7 @@ class GithubService(VCSService):
             return decoded_bytes.decode("utf-8")
         except GithubException as e:
             logging.getLogger('vcs').error(e)
+        return null
 
     def is_initialized(self) -> bool:
         return self.initialized
