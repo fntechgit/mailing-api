@@ -8,7 +8,7 @@ from ..models import MailTemplate, Client
 from ..utils import is_empty, JinjaRender
 from ..services import VCSService
 from django_injector import inject
-
+from rest_framework.fields import empty
 
 class MailTemplateReadSerializer(serializers.ModelSerializer):
 
@@ -20,8 +20,8 @@ class MailTemplateReadSerializer(serializers.ModelSerializer):
     versions = SerializerMethodField("get_versions_serializer")
 
     @inject
-    def __init__(self, vcs_service: VCSService = None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, instance=None, data=empty, vcs_service:VCSService = None, **kwargs):
+        super().__init__(instance, data, **kwargs)
         self.vcs_service = vcs_service
 
     def get_expand(self):
@@ -79,8 +79,8 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
         return current_user
 
     @inject
-    def __init__(self, vcs_service: VCSService = None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, instance=None, data=empty, vcs_service:VCSService = None, **kwargs):
+        super().__init__(instance, data, **kwargs)
         self.vcs_service = vcs_service
 
     def create(self, validated_data):
