@@ -78,6 +78,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
     modified = TimestampField(read_only=True)
     parent = serializers.PrimaryKeyRelatedField(many=False, queryset=MailTemplate.objects.all(), required=False, allow_null=True)
     allowed_clients = serializers.PrimaryKeyRelatedField(many=True, queryset=Client.objects.all(), required=False)
+    versions = SerializerMethodField("get_versions_serializer")
 
     def get_current_user_name(self):
         request = self.context.get('request')
@@ -135,6 +136,32 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
             self.vcs_service.save_file(f'{identifier}.{file_ext}', file_content, f'Updated by {self.get_current_user_name()}')
 
         return super().update(instance, validated_data)
+
+    def get_expand(self):
+        request = self.context.get('request')
+        str_expand = request.GET.get('expand', '') if request else None
+        return str_expand.split(',') if str_expand else []
+
+    def get_versions_serializer(self, obj):
+        expand = self.get_expand()
+        if 'versions' in expand:
+            identifier = obj.identifier
+            ext = 'html' if is_empty(obj.mjml_content) else 'mjml'
+
+            if not self.vcs_service is None and self.vcs_service.is_initialized():
+                filename = f'{identifier}.{ext}'
+
+                commits = self.vcs_service.get_file_versions(filename)
+                return [{
+                    'type': ext,
+                    'sha': c.sha,
+                    'html_url': c.html_url,
+                    'last_modified': c.last_modified,
+                    'commit_message': c.commit.message,
+                    'content': self.vcs_service.get_file_content_by_sha1(filename, c.sha)
+                } for c in commits]
+
+        return []
 
     def validate(self, data):
         from_email = data['from_email'] if 'from_email' in data else None
