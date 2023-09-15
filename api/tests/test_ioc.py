@@ -4,6 +4,8 @@ from injector import Module, singleton
 from api.models import Client
 from api.security.abstract_access_token_service import AbstractAccessTokenService
 from api.services.email_service import EmailService
+from api.services.github_service import GithubService
+from api.services.vcs_service import VCSService
 from api.utils import config
 
 
@@ -42,3 +44,6 @@ class TestApiAppModule(Module):
 
         test_access_token_service = MockAccessTokenService()
         binder.bind(AbstractAccessTokenService, to=test_access_token_service, scope=singleton)
+
+        vcs_service = GithubService()
+        binder.bind(VCSService, to=vcs_service, scope=singleton)

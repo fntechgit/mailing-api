@@ -1,6 +1,5 @@
 import logging
 import traceback
-
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -10,12 +9,11 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import StaticHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
-
 from .exceptions import EntityNotFound
 from ..models import MailTemplate, Client
 from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import MailTemplateReadSerializer, MailTemplateWriteSerializer
-from ..utils import JinjaRender, config, is_empty
+from ..utils import JinjaRender, config
 
 
 class CustomClientSchema(AutoSchema):
@@ -267,5 +265,3 @@ class MailTemplateAllowedClientsAPIView(GenericAPIView):
         except:
             logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
