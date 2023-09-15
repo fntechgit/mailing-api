@@ -75,7 +75,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
     def get_current_user_name(self):
         request = self.context.get('request')
         token_info = request.auth
-        current_user = f'{token_info["user_first_name"]} {token_info["user_first_name"]} ({token_info["user_email"]})' if 'user_identifier' in token_info else 'Anonymous User'
+        current_user = f'{token_info["user_first_name"]} {token_info["user_last_name"]} ({token_info["user_email"]})' if 'user_identifier' in token_info else 'Anonymous User'
         return current_user
 
     @inject
