@@ -1,3 +1,4 @@
+import datetime
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
@@ -9,6 +10,7 @@ from ..utils import is_empty, JinjaRender
 from ..services import VCSService
 from django_injector import inject
 from rest_framework.fields import empty
+
 
 
 class MailTemplateReadSerializer(serializers.ModelSerializer):
@@ -46,6 +48,11 @@ class MailTemplateReadSerializer(serializers.ModelSerializer):
             return ClientReadSerializer(obj.allowed_clients.all(), many=True, context=self.context)
         return [ x.id for x in obj.allowed_clients.all()]
 
+    @staticmethod
+    def convert_vcs_date_to_epoch(vcs_date: datetime):
+
+        return vcs_date.timestamp()
+
     def get_versions_serializer(self, obj):
         expand = self.get_expand()
         if 'versions' in expand:
@@ -61,6 +68,7 @@ class MailTemplateReadSerializer(serializers.ModelSerializer):
                     'sha': c.sha,
                     'html_url': c.html_url,
                     'last_modified' : c.last_modified,
+                    'commit_date': MailTemplateReadSerializer.convert_vcs_date_to_epoch(c.commit.committer.date),
                     'commit_message': c.commit.message,
                     'content': self.vcs_service.get_file_content_by_sha1(filename, c.sha)
                 } for c in commits ]
@@ -158,6 +166,7 @@ class MailTemplateWriteSerializer(serializers.ModelSerializer):
                     'html_url': c.html_url,
                     'last_modified': c.last_modified,
                     'commit_message': c.commit.message,
+                    'commit_date': MailTemplateReadSerializer.convert_vcs_date_to_epoch(c.commit.committer.date),
                     'content': self.vcs_service.get_file_content_by_sha1(filename, c.sha)
                 } for c in commits]
 
