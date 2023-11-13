@@ -21,6 +21,7 @@ class ClientEndpointsTest(APITestCase):
 
     def setUp(self):
         apps.app_configs['django_injector'].injector = Injector([TestApiAppModule()])
+
         # create a mock token
         self.access_token = self.randomString(25)
         client = None

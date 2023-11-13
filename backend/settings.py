@@ -12,12 +12,26 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from django.utils.translation import ugettext_lazy as _
+from dotenv import load_dotenv
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+
+CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
+env = os.getenv('ENV')
+
+if env == 'test':
+    filename = '.env'
+    if env:
+        filename = '{filename}.{env}'.format(filename=filename, env=env)
+
+    ENV_FILE = os.path.join(CURRENT_PATH, filename)
+    load_dotenv(ENV_FILE)
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -35,7 +49,7 @@ FROM_EMAIL = os.getenv("FROM_EMAIL")
 # https://docs.djangoproject.com/en/3.0/howto/error-reporting/
 # string should have this format
 # name1,email1|name2,email2|....|nameN,emailN
-ADMINS = [tuple(x.split(',')) for x in os.getenv('ADMINS', []).split('|')]
+ADMINS = [tuple(x.split(',')) for x in os.getenv('ADMINS', "").split('|')]
 # admin from email
 SERVER_EMAIL = os.getenv('SERVER_EMAIL')
 # Application definition
@@ -227,6 +241,11 @@ LOGGING = {
             'propagate': True,
         },
         'api': {
+            'handlers': ['file', 'mail_admins'],
+            'level': os.getenv('API_LOG_LEVEL', 'DEBUG'),
+            'propagate': True,
+        },
+        'vcs': {
             'handlers': ['file', 'mail_admins'],
             'level': os.getenv('API_LOG_LEVEL', 'DEBUG'),
             'propagate': True,
