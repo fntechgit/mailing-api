@@ -14,7 +14,7 @@ from ..models import MailTemplate, Client
 from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import MailTemplateReadSerializer, MailTemplateWriteSerializer
 from ..utils import JinjaRender, config
-
+from django.http import Http404
 
 class CustomClientSchema(AutoSchema):
     def _get_serializer(self, method, path):
@@ -109,10 +109,28 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     parser_classes = (JSONParser,)
     schema = CustomClientSchema()
 
+    def get_object(self):
+        try:
+            pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+            if pk and pk is not None:
+                pk = str(pk)
+                if pk.isdigit():
+                    return MailTemplate.objects.get(pk=int(pk))
+                else:
+                    return MailTemplate.objects.get(identifier=pk)
+            raise Http404
+        except:
+            raise Http404
+
     def get_queryset(self):
-        pk = self.kwargs['pk'] if 'pk' in self.kwargs else 0
-        if pk > 0:
-            return MailTemplate.objects.get_queryset().filter(pk=pk).order_by('id')
+        pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        if pk and pk is not None:
+            pk = str(pk)
+            if pk.isdigit():
+                return MailTemplate.objects.get_queryset().filter(pk=int(pk)).order_by('id')
+            else:
+                return MailTemplate.objects.get_queryset().filter(identifier=pk).order_by('id')
+
         return MailTemplate.objects.get_queryset().order_by('id')
 
     def get_serializer_class(self, *args, **kwargs):
@@ -122,7 +140,17 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
     @oauth2_scope_required()
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
+        try:
+            return self.retrieve(request, *args, **kwargs)
+        except ValidationError as e:
+            logging.getLogger('api').warning(e)
+            return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
+        except Http404 as e:
+            logging.getLogger('api').warning(e)
+            return Response("Object Not Found", status=status.HTTP_404_NOT_FOUND)
+        except:
+            logging.getLogger('api').error(traceback.format_exc())
+            return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @oauth2_scope_required()
     def put(self, request, *args, **kwargs):
@@ -132,6 +160,9 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         except ValidationError as e:
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
+        except Http404 as e:
+            logging.getLogger('api').warning(e)
+            return Response("Object Not Found", status=status.HTTP_404_NOT_FOUND)
         except:
             logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -155,6 +186,9 @@ class MailTemplateRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         except ValidationError as e:
             logging.getLogger('api').warning(e)
             return Response(e.detail, status=status.HTTP_412_PRECONDITION_FAILED)
+        except Http404 as e:
+            logging.getLogger('api').warning(e)
+            return Response("Object Not Found", status=status.HTTP_404_NOT_FOUND)
         except:
             logging.getLogger('api').error(traceback.format_exc())
             return Response('server error', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
