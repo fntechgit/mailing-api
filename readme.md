@@ -73,3 +73,22 @@ python manage.py runjob send_emails_job
 GRANT SUPER ON *.* TO 'fnopen_mailing_api_dev_user'@'172.16.1.%';
 FLUSH PRIVILEGES;
 ```
+
+# VCS Integration ( GITHUB )
+
+we need to create a new github app here
+
+https://github.com/organizations/fntechgit/settings/apps/new
+
+see https://docs.github.com/en/apps/creating-github-apps/about-creating-github-apps/about-creating-github-apps
+
+and 
+
+1. Generate a new private key
+2. set the proper repositories permissions ( Content [read/write])
+3. install org wide the new app
+4. APP ID  and private key ( encoded on B64) should be provide on .env file using vars
+   GITHUB_APP_ID
+   GITHUB_APP_PRIVATE_KEY
+
+
