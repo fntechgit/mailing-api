@@ -232,17 +232,23 @@ class ClientEndpointsTest(APITestCase):
         json_response = json.loads(response.content)
         self.assertEqual(json_response['identifier'], 'identifier_1')
 
-        pk = int(json_response['id'])
+        pk = json_response['identifier']
+        #pk = json_response['id']
+
+        url = reverse('mail-template-endpoints:retrieve_update_destroy', kwargs={'pk': 'jose'})
+        response = self.client.get('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = {
             'is_active': True
         }
+
         url = reverse('mail-template-endpoints:retrieve_update_destroy', kwargs={'pk': pk})
         response = self.client.put('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)
         json_response = json.loads(response.content)
         self.assertEqual(json_response[0],
-                         _('If you activate the template at least should have a body content (HTML/PLAIN)'))
+                         _('If you activate the template at least should have a body content (HTML/PLAIN).'))
 
     def test_add_update_activate_ok(self):
         url = reverse('mail-template-endpoints:list-create')
