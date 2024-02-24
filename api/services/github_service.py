@@ -30,7 +30,7 @@ class GithubService(VCSService):
 
             # we need app id and app pk on pem format ( app params)
             auth = Auth.AppAuth(app_id, private_key)
-            self.gi = GithubIntegration(auth=auth)
+            self.gi = GithubIntegration(auth=auth, timeout=60, retry=5, pool_size=5)
             installation = self.gi.get_installations()[0]
             self.g = installation.get_github_for_installation()
             # we need repo info ( user name and repo name)
