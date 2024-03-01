@@ -125,10 +125,12 @@ class MailWriteSerializer(serializers.ModelSerializer):
         payload = validated_data['payload'] if 'payload' in validated_data else []
         render = JinjaRender()
         instance = Mail(**validated_data)
+        # inject variables to mail content
         plain, html = render.render(instance.template, payload, True)
         instance.html_content = html
         instance.plain_content = plain
-        instance.from_email = instance.template.from_email
+        # inject variables to from email
+        instance.from_email = render.render_subject(instance.template.from_email, payload)
 
         if is_empty(instance.from_email):
             raise ValidationError(_("from_email is mandatory."))
@@ -139,6 +141,7 @@ class MailWriteSerializer(serializers.ModelSerializer):
         if is_empty(instance.plain_content) and is_empty(instance.html_content):
             raise ValidationError(_("content is mandatory (HTML/PLAIN)."))
 
+        # inject variables to subject
         instance.subject = render.render_subject(instance.subject, payload)
         instance.save()
 
