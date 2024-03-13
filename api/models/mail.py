@@ -27,7 +27,7 @@ class Mail(TimeStampedModel):
     # relations
 
     owner = models.ForeignKey(Client, on_delete=models.DO_NOTHING, null=False, blank=False)
-    template = models.ForeignKey(MailTemplate, on_delete=models.DO_NOTHING, null=False, blank=False)
+    template = models.ForeignKey(MailTemplate, on_delete=models.SET_NULL, null=True, blank=False)
 
     def mark_retry(self, last_error:str):
         if self.retries < self.template.max_retries:
