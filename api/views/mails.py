@@ -1,5 +1,6 @@
 import logging
 import traceback
+import datetime
 
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
@@ -16,6 +17,7 @@ from ..security import OAuth2Authentication, oauth2_scope_required
 from ..serializers import MailReadSerializer, MailWriteSerializer
 from ..utils import config
 from django.db.models import Q
+from django_filters import FilterSet
 
 
 class CustomClientSchema(AutoSchema):
@@ -46,9 +48,10 @@ class CustomClientSchema(AutoSchema):
 
 
 class MailFilter(FilterSet):
-    # could alternatively use IsoDateTimeFilter instead of assuming local time.
     is_sent = filters.BooleanFilter(method='filter_is_sent')
     term = filters.CharFilter(method='filter_term')
+    from_sent_date = filters.NumberFilter(method='filter_from_sent_date')
+    to_sent_date = filters.NumberFilter(method='filter_to_sent_date')
 
     class Meta:
         model = Mail
@@ -71,13 +74,23 @@ class MailFilter(FilterSet):
             return queryset.filter(sent_date__isnull=False)
         return queryset.filter(sent_date__isnull=True)
 
+    def filter_from_sent_date(self, queryset, name, value):
+        if value:
+            return queryset.filter(sent_date__gte=datetime.datetime.utcfromtimestamp(int(value)))
+        return queryset.filter()
+
+    def filter_to_sent_date(self, queryset, name, value):
+        if value:
+            return queryset.filter(sent_date__lte=datetime.datetime.utcfromtimestamp(int(value)))
+        return queryset.filter()
+
 
 class MailListCreateAPIView(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = MailFilter
     schema = CustomClientSchema()
     # ordering
-    ordering_fields = ['id', 'created', 'updated', 'subject', 'locale']
+    ordering_fields = ['id', 'created', 'updated', 'subject', 'locale', 'sent_date']
     ordering = ['id']
     authentication_classes = [OAuth2Authentication]
     parser_classes = (JSONParser,)

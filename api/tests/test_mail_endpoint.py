@@ -137,3 +137,26 @@ class EmailEndpointsTests(APITestCase):
                                     data, format='json')
         json_response = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_list(self):
+        url = reverse('mail-endpoints:list-send')
+
+        data = {
+            'payload': {
+                'title': 'this is the title',
+                'content': 'this is the content',
+            },
+            'to_email': 'smarcet@gmail.com,sebastian@tipit.net',
+            'template': self.child.identifier,
+        }
+
+        response = self.client.post('{url}?access_token={access_token}'.format(url=url, access_token=self.access_token),
+                                    data, format='json')
+        json_response = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.get('{url}?access_token={access_token}&from_sent_date=1594092783'.format(url=url, access_token=self.access_token))
+        json_response = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
